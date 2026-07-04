@@ -1,8 +1,34 @@
 import { useState, useEffect, useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import Features from './pages/Features';
+import FAQ from './pages/FAQ';
+import Wiki from './pages/Wiki';
+import Gallery from './pages/Gallery';
 import './App.css';
 
-function App() {
-  // ── 1. SPLIT COMPARISON SLIDER STATE ──
+// Component to handle auto-scrolling to top on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
+// Navigation Link component that adds 'active' class on matching route
+function NavigationLink({ to, label }) {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+  return (
+    <Link to={to} className={`nav-link ${isActive ? 'active' : ''}`}>
+      {label}
+    </Link>
+  );
+}
+
+// ── HOME PAGE COMPONENT ──
+function Home() {
+  // ── SPLIT COMPARISON SLIDER STATE ──
   const [clipPercent, setClipPercent] = useState(50);
   const splitRef = useRef(null);
 
@@ -22,7 +48,7 @@ function App() {
     setClipPercent(percent);
   };
 
-  // ── 2. SUBTITLE CUSTOMIZER MOCK STATE ──
+  // ── SUBTITLE CUSTOMIZER MOCK STATE ──
   const [subFont, setSubFont] = useState('Outfit');
   const [subColor, setSubColor] = useState('#FFFFFF');
   const [subSize, setSubSize] = useState(18);
@@ -31,7 +57,7 @@ function App() {
   const [isSubItalic, setIsSubItalic] = useState(false);
   const [isSubShadow, setIsSubShadow] = useState(true);
 
-  // ── 3. DOWNLOAD SIMULATOR STATE ──
+  // ── DOWNLOAD SIMULATOR STATE ──
   const [dlProgress, setDlProgress] = useState(15);
   const [dlSpeed, setDlSpeed] = useState(14.8);
 
@@ -66,57 +92,6 @@ function App() {
 
   return (
     <>
-      {/* Decorative Grid and Ambient Glows */}
-      <div className="bg-grid"></div>
-      <div className="glow-backdrop" style={{ top: '-100px', left: '-100px', background: '#FF9F1C' }}></div>
-      <div className="glow-backdrop" style={{ bottom: '10%', right: '-100px', background: '#2EC4B6' }}></div>
-
-      {/* ── HEADER ── */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        background: 'rgba(6, 6, 8, 0.75)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid var(--border-light)'
-      }}>
-        <div className="container" style={{
-          height: '72px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, var(--accent-orange) 0%, #E65F00 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: 'var(--glow-orange)'
-            }}>
-              <span className="material-icons-round" style={{ color: '#000', fontSize: '20px' }}>play_arrow</span>
-            </div>
-            <span style={{ fontSize: '22px', fontWeight: 800, fontFamily: 'var(--font-heading)', tracking: '-0.03em' }}>
-              watch<span style={{ color: 'var(--accent-orange)' }}>Any</span>
-            </span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-            <span onClick={() => scrollToSection('features')} style={{ color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px', fontWeight: 500, transition: 'var(--transition-fast)' }} className="nav-link">Features</span>
-            <span onClick={() => scrollToSection('quality-enhancement')} style={{ color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px', fontWeight: 500, transition: 'var(--transition-fast)' }} className="nav-link">Quality Enhancement</span>
-            <span onClick={() => scrollToSection('subtitle-customizer')} style={{ color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '14px', fontWeight: 500, transition: 'var(--transition-fast)' }} className="nav-link">Custom Subtitles</span>
-            <button className="btn-primary" onClick={() => scrollToSection('download')} style={{ padding: '8px 18px', fontSize: '13px' }}>
-              <span className="material-icons-round" style={{ fontSize: '16px' }}>download</span> Download
-            </button>
-          </nav>
-        </div>
-      </header>
-
       {/* ── HERO SECTION ── */}
       <section style={{ padding: '80px 0 60px 0', position: 'relative' }}>
         <div className="container" style={{
@@ -219,14 +194,14 @@ function App() {
                   </div>
                   
                   {/* Buttons */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#FFF' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', color: '#FFF' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                       <span className="material-icons-round" style={{ cursor: 'pointer', fontSize: '20px' }}>play_arrow</span>
                       <span className="material-icons-round" style={{ cursor: 'pointer', fontSize: '20px' }}>skip_next</span>
                       <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>21:40 / 24:00</span>
                     </div>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto' }}>
                       {/* Video Enhancement icon glowing */}
                       <span className="material-icons-round text-glow-orange" style={{ color: 'var(--accent-orange)', fontSize: '20px', cursor: 'pointer' }}>auto_awesome</span>
                       <span className="material-icons-round" style={{ color: '#FFF', fontSize: '20px', cursor: 'pointer' }}>closed_caption</span>
@@ -257,8 +232,8 @@ function App() {
         </div>
       </section>
 
-      {/* ── CORE FEATURES LIST ── */}
-      <section id="features" style={{ padding: '60px 0', borderTop: '1px solid var(--border-light)' }}>
+      {/* ── CORE FEATURES GRID ── */}
+      <section style={{ padding: '60px 0', borderTop: '1px solid var(--border-light)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <h2 style={{ fontSize: '36px', marginBottom: '12px', fontFamily: 'var(--font-heading)' }}>Engineered for Perfectionists</h2>
@@ -275,7 +250,7 @@ function App() {
             {/* Feature 1 */}
             <div className="glass-panel" style={{ padding: '24px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: 'rgba(255, 159, 28, 0.08)', border: '1px solid rgba(255, 159, 28, 0.15)', display: 'flex', alignItems: 'center', justifyContents: 'center', color: 'var(--accent-orange)', marginBottom: '20px', paddingLeft: '12px' }}>
-                <span className="material-icons-round">auto_awesome</span>
+                <span className="material-icons-round" style={{ marginTop: '12px' }}>auto_awesome</span>
               </div>
               <h3 style={{ fontSize: '18px', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>GPU shaders enhancement</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', lineHeight: 1.6 }}>
@@ -286,7 +261,7 @@ function App() {
             {/* Feature 2 */}
             <div className="glass-panel" style={{ padding: '24px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: 'rgba(46, 196, 182, 0.08)', border: '1px solid rgba(46, 196, 182, 0.15)', display: 'flex', alignItems: 'center', justifyContents: 'center', color: 'var(--accent-teal)', marginBottom: '20px', paddingLeft: '12px' }}>
-                <span className="material-icons-round">subtitles</span>
+                <span className="material-icons-round" style={{ marginTop: '12px' }}>subtitles</span>
               </div>
               <h3 style={{ fontSize: '18px', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>Dynamic subtitle padding</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', lineHeight: 1.6 }}>
@@ -297,7 +272,7 @@ function App() {
             {/* Feature 3 */}
             <div className="glass-panel" style={{ padding: '24px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: 'rgba(255, 77, 109, 0.08)', border: '1px solid rgba(255, 77, 109, 0.15)', display: 'flex', alignItems: 'center', justifyContents: 'center', color: 'var(--accent-red)', marginBottom: '20px', paddingLeft: '12px' }}>
-                <span className="material-icons-round">offline_pin</span>
+                <span className="material-icons-round" style={{ marginTop: '12px' }}>offline_pin</span>
               </div>
               <h3 style={{ fontSize: '18px', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>Offline database persistence</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', lineHeight: 1.6 }}>
@@ -309,7 +284,7 @@ function App() {
       </section>
 
       {/* ── INTERACTIVE QUALITY SLIDER SECTION ── */}
-      <section id="quality-enhancement" style={{ padding: '80px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-light)' }}>
+      <section style={{ padding: '80px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-light)' }}>
         <div className="container" style={{
           display: 'grid',
           gridTemplateColumns: '0.9fr 1.1fr',
@@ -379,7 +354,7 @@ function App() {
       </section>
 
       {/* ── INTERACTIVE SUBTITLE CUSTOMIZER ── */}
-      <section id="subtitle-customizer" style={{ padding: '80px 0', borderTop: '1px solid var(--border-light)' }}>
+      <section style={{ padding: '80px 0', borderTop: '1px solid var(--border-light)' }}>
         <div className="container" style={{
           display: 'grid',
           gridTemplateColumns: '1.1fr 0.9fr',
@@ -563,34 +538,34 @@ function App() {
           {/* Download Simulator widget */}
           <div>
             <div className="glass-panel dl-sim-card" style={{ background: '#08080C' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px' }}>
+              <div style={{ display: 'flex', justifyBetween: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px' }}>
                 <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '14px', color: 'white' }}>DOWNLOAD MANAGER</span>
-                <span style={{ fontSize: '11px', color: 'var(--accent-teal)', fontWeight: 600, fontFamily: 'monospace' }}>ACTIVE SPEED: {dlSpeed} MB/s</span>
+                <span style={{ fontSize: '11px', color: 'var(--accent-teal)', fontWeight: 600, fontFamily: 'monospace', marginLeft: 'auto' }}>ACTIVE SPEED: {dlSpeed} MB/s</span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {/* Active Download */}
                 <div style={{ background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '6px' }}>
+                  <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: '12.5px', marginBottom: '6px' }}>
                     <span style={{ fontWeight: 600, color: 'white' }}>Frieren: Beyond Journey's End - EP 12</span>
-                    <span style={{ fontFamily: 'monospace', color: 'var(--accent-teal)' }}>{dlProgress}%</span>
+                    <span style={{ fontFamily: 'monospace', color: 'var(--accent-teal)', marginLeft: 'auto' }}>{dlProgress}%</span>
                   </div>
                   <div className="progress-bar-container" style={{ marginBottom: '6px' }}>
                     <div className="progress-bar-fill" style={{ width: `${dlProgress}%` }}></div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', color: 'var(--text-muted)' }}>
+                  <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: '10.5px', color: 'var(--text-muted)' }}>
                     <span>{(1.2 * (dlProgress / 100)).toFixed(2)} GB / 1.20 GB</span>
-                    <span>Downloading...</span>
+                    <span style={{ marginLeft: 'auto' }}>Downloading...</span>
                   </div>
                 </div>
 
                 {/* Completed Download */}
-                <div style={{ padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: 0.65 }}>
+                <div style={{ padding: '12px', display: 'flex', justifyBetween: 'space-between', alignItems: 'center', opacity: 0.65 }}>
                   <div>
                     <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'white' }}>Demon Slayer: Kimetsu no Yaiba - EP 04</div>
                     <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>1.10 GB • Completed</div>
                   </div>
-                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(46, 196, 182, 0.1)', border: '1px solid var(--accent-teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-teal)' }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(46, 196, 182, 0.1)', border: '1px solid var(--accent-teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-teal)', marginLeft: 'auto' }}>
                     <span className="material-icons-round" style={{ fontSize: '14px' }}>check</span>
                   </div>
                 </div>
@@ -656,9 +631,88 @@ function App() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
+
+// ── MAIN APP SHELL WITH ROUTER ──
+function App() {
+  return (
+    <Router>
+      <ScrollToTop />
+      {/* Decorative Background Grid */}
+      <div className="bg-grid"></div>
+      <div className="glow-backdrop" style={{ top: '-100px', left: '-100px', background: '#FF9F1C' }}></div>
+      <div className="glow-backdrop" style={{ bottom: '10%', right: '-100px', background: '#2EC4B6' }}></div>
+
+      {/* ── HEADER ── */}
+      <header style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        background: 'rgba(6, 6, 8, 0.75)',
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid var(--border-light)'
+      }}>
+        <div className="container" style={{
+          height: '72px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          {/* Logo */}
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', textDecoration: 'none', color: 'white' }}>
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, var(--accent-orange) 0%, #E65F00 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: 'var(--glow-orange)'
+            }}>
+              <span className="material-icons-round" style={{ color: '#000', fontSize: '20px' }}>play_arrow</span>
+            </div>
+            <span style={{ fontSize: '22px', fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '-0.03em' }}>
+              watch<span style={{ color: 'var(--accent-orange)' }}>Any</span>
+            </span>
+          </Link>
+
+          {/* Navigation Links */}
+          <nav style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+            <NavigationLink to="/" label="Home" />
+            <NavigationLink to="/features" label="Features" />
+            <NavigationLink to="/gallery" label="Gallery" />
+            <NavigationLink to="/faq" label="FAQ" />
+            <NavigationLink to="/wiki" label="Wiki Docs" />
+            
+            <Link to="/#download" onClick={() => {
+              // Scroll to download card after routing if on home page
+              setTimeout(() => {
+                const el = document.getElementById('download');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}>
+              <button className="btn-primary" style={{ padding: '8px 18px', fontSize: '13px' }}>
+                <span className="material-icons-round" style={{ fontSize: '16px' }}>download</span> Download
+              </button>
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      {/* ── ROUTE PAGES ── */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/wiki" element={<Wiki />} />
+        <Route path="/gallery" element={<Gallery />} />
+      </Routes>
 
       {/* ── FOOTER ── */}
-      <footer style={{ padding: '40px 0', borderTop: '1px solid var(--border-light)', background: '#030305' }}>
+      <footer style={{ padding: '40px 0', borderTop: '1px solid var(--border-light)', background: '#030305', marginTop: 'auto' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontSize: '16px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
@@ -673,7 +727,7 @@ function App() {
           </div>
         </div>
       </footer>
-    </>
+    </Router>
   );
 }
 
