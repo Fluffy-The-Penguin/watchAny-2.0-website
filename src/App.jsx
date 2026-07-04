@@ -28,6 +28,8 @@ function NavigationLink({ to, label }) {
 
 // ── HOME PAGE COMPONENT ──
 function Home() {
+  const [activeTask, setActiveTask] = useState('enhancement');
+
   // ── SPLIT COMPARISON SLIDER STATE ──
   const [clipPercent, setClipPercent] = useState(50);
   const splitRef = useRef(null);
@@ -96,7 +98,7 @@ function Home() {
       <section style={{ padding: '80px 0 60px 0', position: 'relative' }}>
         <div className="container" style={{
           display: 'grid',
-          gridTemplateColumns: '1.1fr 0.9fr',
+          gridTemplateColumns: '1fr 1fr',
           gap: '48px',
           alignItems: 'center'
         }}>
@@ -130,7 +132,7 @@ function Home() {
             }}>
               Stream & Download <br />
               <span className="gradient-text-orange">Anime, Movies & TV</span> <br />
-              In High Fidelity.
+              Build The New Way.
             </h1>
             
             <p style={{
@@ -145,14 +147,12 @@ function Home() {
 
             {/* CTAs */}
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <button className="btn-primary" onClick={() => scrollToSection('download')}>
-                <span className="material-icons-round">download</span> Get watchAny Free
+              <button className="btn-primary" onClick={() => scrollToSection('cockpit')}>
+                <span className="material-icons-round">bolt</span> Test Agent Cockpit
               </button>
-              <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank" rel="noreferrer">
-                <button className="btn-secondary">
-                  <span className="material-icons-round">code</span> GitHub Source
-                </button>
-              </a>
+              <button className="btn-secondary" onClick={() => scrollToSection('download')}>
+                <span className="material-icons-round">download</span> Get watchAny
+              </button>
             </div>
           </div>
 
@@ -232,7 +232,263 @@ function Home() {
         </div>
       </section>
 
-      {/* ── CORE FEATURES GRID ── */}
+      {/* ── INTERACTIVE DEVELOPER COCKPIT ── */}
+      <section id="cockpit" style={{ padding: '80px 0', borderTop: '1px solid var(--border-light)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+            <h2 style={{ fontSize: '38px', marginBottom: '12px', fontFamily: 'var(--font-heading)' }}>Interactive Developer Cockpit</h2>
+            <p style={{ color: 'var(--text-secondary)', maxWidth: '580px', margin: '0 auto', fontSize: '15px' }}>
+              Select an agent operation to inspect terminal execution logs and manipulate the simulation in real time.
+            </p>
+          </div>
+
+          <div className="cockpit-container">
+            {/* Left Console Window */}
+            <div className="console-window">
+              <div className="console-header">
+                <div className="console-tab">
+                  <span className="material-icons-round" style={{ fontSize: '15px' }}>terminal</span>
+                  Agent Operations Console
+                </div>
+                <div className="console-dots">
+                  <div className="console-dot" style={{ background: '#FF5F56' }}></div>
+                  <div className="console-dot" style={{ background: '#FFBD2E' }}></div>
+                  <div className="console-dot" style={{ background: '#27C93F' }}></div>
+                </div>
+              </div>
+              
+              <div className="console-body">
+                {/* Mode Selectors */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+                  <button 
+                    onClick={() => setActiveTask('enhancement')}
+                    className={`console-action-btn ${activeTask === 'enhancement' ? 'active' : ''}`}
+                  >
+                    <span className="material-icons-round" style={{ fontSize: '16px' }}>auto_awesome</span>
+                    Task: Apply GPU Quality Enhancement Shaders
+                  </button>
+                  <button 
+                    onClick={() => setActiveTask('subtitles')}
+                    className={`console-action-btn ${activeTask === 'subtitles' ? 'active' : ''}`}
+                  >
+                    <span className="material-icons-round" style={{ fontSize: '16px' }}>subtitles</span>
+                    Task: Style Subtitles Customizer
+                  </button>
+                  <button 
+                    onClick={() => setActiveTask('downloads')}
+                    className={`console-action-btn ${activeTask === 'downloads' ? 'active' : ''}`}
+                  >
+                    <span className="material-icons-round" style={{ fontSize: '16px' }}>download</span>
+                    Task: Manage High-Speed Downloads queue
+                  </button>
+                </div>
+
+                {/* Log outputs depending on active task */}
+                <div style={{ 
+                  background: '#040407', 
+                  border: '1px solid var(--border-light)', 
+                  borderRadius: '6px', 
+                  padding: '16px', 
+                  fontSize: '12.5px', 
+                  fontFamily: 'var(--font-mono)',
+                  color: activeTask === 'enhancement' ? '#38BDF8' : activeTask === 'subtitles' ? '#A78BFA' : '#34D399',
+                  lineHeight: '1.7'
+                }}>
+                  {activeTask === 'enhancement' && (
+                    <>
+                      <div>[agent-1] Spawning video playback pipeline... OK</div>
+                      <div>[agent-1] Resolving MPV shader filters... OK</div>
+                      <div>[agent-1] Hardware deband enabled: deband=yes</div>
+                      <div>[agent-1] Configured iterations: 4 (threshold: 48, range: 16)</div>
+                      <div>[agent-1] Applied adaptive edge sharpening: sharpen=1.0</div>
+                      <div>[agent-1] Saturated color filter: contrast=3, saturation=4</div>
+                      <div style={{ color: 'white', marginTop: '10px' }}>&gt; Drag the slider handle on the right simulator to inspect deband results.</div>
+                    </>
+                  )}
+                  {activeTask === 'subtitles' && (
+                    <>
+                      <div>[agent-1] Scanning playback stream subtitles: OK</div>
+                      <div>[agent-1] Injecting custom styling configurations...</div>
+                      <div>[agent-1] Set font family: {subFont}</div>
+                      <div>[agent-1] Set font size: {subSize}px</div>
+                      <div>[agent-1] Set text color: {subColor}</div>
+                      <div>[agent-1] Set background opacity: {subBgOpacity}</div>
+                      <div>[agent-1] Subtitle bold: {isSubBold ? 'ON' : 'OFF'}</div>
+                      <div>[agent-1] Subtitle italic: {isSubItalic ? 'ON' : 'OFF'}</div>
+                      <div>[agent-1] Text outline shadow: {isSubShadow ? 'ON' : 'OFF'}</div>
+                      <div>[agent-1] Applied DynamicMargins layout boundaries: OK</div>
+                    </>
+                  )}
+                  {activeTask === 'downloads' && (
+                    <>
+                      <div>[agent-1] Scanning offline download database... OK</div>
+                      <div>[agent-1] Verified database path: secure app documents directory</div>
+                      <div>[agent-1] Initializing multi-threaded download stream...</div>
+                      <div>[agent-1] Target speed: {dlSpeed} MB/s</div>
+                      <div>[agent-1] Progress database sync completed. 0 items lost.</div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Simulator Panel */}
+            <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyBetween: 'center' }}>
+              {activeTask === 'enhancement' && (
+                <div>
+                  <h3 style={{ fontSize: '18px', fontFamily: 'var(--font-heading)', marginBottom: '12px' }}>GPU Shaders Compare</h3>
+                  <div 
+                    className="split-viewer"
+                    ref={splitRef}
+                    onMouseMove={handleMouseMove}
+                    onTouchMove={handleTouchMove}
+                    style={{ '--clip-percent': `${clipPercent}%`, marginBottom: '16px' }}
+                  >
+                    {/* Raw Image (Before) */}
+                    <img src="/raw.png" className="split-image" alt="Raw Quality" />
+                    <div className="split-label split-label-before">Raw Stream</div>
+                    
+                    {/* Enhanced Image (After) */}
+                    <div className="split-overlay">
+                      <img src="/enhanced.png" className="split-image" alt="Enhanced Quality" style={{ width: '100%', height: '100%' }} />
+                    </div>
+                    <div className="split-label split-label-after">GPU Enhanced</div>
+
+                    {/* Slider Split Line */}
+                    <div className="split-bar"></div>
+                    
+                    {/* Slider Handle */}
+                    <div className="split-handle">
+                      <span className="material-icons-round" style={{ fontSize: '18px' }}>unfold_more</span>
+                    </div>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5 }}>
+                    Real-time spline rendering. The deband algorithm targets low-quality gradients to produce pixel-perfect smooth colors.
+                  </p>
+                </div>
+              )}
+
+              {activeTask === 'subtitles' && (
+                <div>
+                  <h3 style={{ fontSize: '18px', fontFamily: 'var(--font-heading)', marginBottom: '12px' }}>Live Subtitles Preview</h3>
+                  
+                  {/* Subtitle preview box */}
+                  <div className="sub-preview-box" style={{ marginBottom: '20px' }}>
+                    <img src="/enhanced.png" className="sub-video-bg" alt="Subtitle preview background" />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '15%',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      textAlign: 'center',
+                      width: '85%'
+                    }}>
+                      <span style={{
+                        display: 'inline-block',
+                        lineHeight: '1.4',
+                        fontFamily: subFont === 'Outfit' ? 'var(--font-heading)' : subFont,
+                        color: subColor,
+                        fontSize: `${subSize}px`,
+                        fontWeight: isSubBold ? '700' : '500',
+                        fontStyle: isSubItalic ? 'italic' : 'normal',
+                        padding: '4px 12px',
+                        borderRadius: '6px',
+                        backgroundColor: subBgOpacity > 0 ? `rgba(0,0,0,${subBgOpacity})` : 'transparent',
+                        textShadow: isSubShadow 
+                          ? '1.5px 1.5px 0px #000, -1.5px 1.5px 0px #000, 1.5px -1.5px 0px #000, -1.5px -1.5px 0px #000' 
+                          : 'none',
+                        transition: 'all 0.15s ease-out'
+                      }}>
+                        watchAny makes subtitles look absolutely gorgeous.
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Subtitle Editor Controls */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '6px' }}>FONT FAMILY</span>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {['Outfit', 'Inter', 'monospace', 'serif'].map((font) => (
+                          <button 
+                            key={font}
+                            onClick={() => setSubFont(font)}
+                            style={{
+                              padding: '5px 10px',
+                              borderRadius: '4px',
+                              border: '1px solid',
+                              borderColor: subFont === font ? 'var(--accent-teal)' : 'var(--border-light)',
+                              background: subFont === font ? 'rgba(46, 196, 182, 0.1)' : 'transparent',
+                              color: subFont === font ? 'var(--accent-teal)' : 'var(--text-secondary)',
+                              fontSize: '11px',
+                              cursor: 'pointer',
+                              fontWeight: 600
+                            }}
+                          >
+                            {font}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>SIZE ({subSize}px)</span>
+                        <input 
+                          type="range" 
+                          min="14" 
+                          max="28" 
+                          value={subSize}
+                          onChange={(e) => setSubSize(parseInt(e.target.value))}
+                          style={{ width: '100%', accentColor: 'var(--accent-teal)' }}
+                        />
+                      </div>
+                      <div>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '4px' }}>BG OPACITY ({Math.round(subBgOpacity * 100)}%)</span>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="100" 
+                          value={subBgOpacity * 100}
+                          onChange={(e) => setSubBgOpacity(parseFloat(e.target.value) / 100)}
+                          style={{ width: '100%', accentColor: 'var(--accent-teal)' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTask === 'downloads' && (
+                <div>
+                  <h3 style={{ fontSize: '18px', fontFamily: 'var(--font-heading)', marginBottom: '12px' }}>High-Speed Download queue</h3>
+                  
+                  {/* Download List Sim */}
+                  <div className="glass-panel dl-sim-card" style={{ background: '#040407', border: '1px solid var(--border-medium)', padding: '16px' }}>
+                    <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: '12.5px', marginBottom: '6px' }}>
+                      <span style={{ fontWeight: 600, color: 'white' }}>Frieren: Beyond Journey's End - EP 12</span>
+                      <span style={{ fontFamily: 'monospace', color: 'var(--accent-teal)', marginLeft: 'auto' }}>{dlProgress}%</span>
+                    </div>
+                    <div className="progress-bar-container" style={{ marginBottom: '6px' }}>
+                      <div className="progress-bar-fill" style={{ width: `${dlProgress}%` }}></div>
+                    </div>
+                    <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: '10.5px', color: 'var(--text-muted)' }}>
+                      <span>{(1.2 * (dlProgress / 100)).toFixed(2)} GB / 1.20 GB</span>
+                      <span style={{ marginLeft: 'auto' }}>Downloading...</span>
+                    </div>
+                  </div>
+                  
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5, marginTop: '16px' }}>
+                    Downloads persist in local secure document storage. Multi-threaded pipeline allows speeds up to 24 MB/s (active: {dlSpeed} MB/s).
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CORE FEATURES LIST ── */}
       <section style={{ padding: '60px 0', borderTop: '1px solid var(--border-light)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
@@ -278,298 +534,6 @@ function Home() {
               <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', lineHeight: 1.6 }}>
                 Downloads persist perfectly across updates. We store records in secure app document folders so your progress is never lost.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── INTERACTIVE QUALITY SLIDER SECTION ── */}
-      <section style={{ padding: '80px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-light)' }}>
-        <div className="container" style={{
-          display: 'grid',
-          gridTemplateColumns: '0.9fr 1.1fr',
-          gap: '48px',
-          alignItems: 'center'
-        }}>
-          {/* Slider Texts */}
-          <div>
-            <h2 style={{ fontSize: '36px', marginBottom: '16px', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
-              Experience Next-Gen <br />
-              <span className="gradient-text-orange">GPU Video Scaling</span>
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '24px', lineHeight: 1.6 }}>
-              Say goodbye to ugly gradient blocks and blurriness. Turn on hardware-accelerated shaders to apply debanding, custom contrast, and color saturation dynamically.
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <span className="material-icons-round" style={{ color: 'var(--accent-orange)', fontSize: '20px', marginTop: '2px' }}>check_circle_outline</span>
-                <div>
-                  <h4 style={{ fontSize: '15px', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>Custom Saturation & Contrast</h4>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Increase color fidelity on washed-out anime streams.</p>
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <span className="material-icons-round" style={{ color: 'var(--accent-orange)', fontSize: '20px', marginTop: '2px' }}>check_circle_outline</span>
-                <div>
-                  <h4 style={{ fontSize: '15px', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>Deband Iterations Controls</h4>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Eliminate flat color blocking and gradient rings.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Slider Widget */}
-          <div>
-            <div 
-              className="split-viewer"
-              ref={splitRef}
-              onMouseMove={handleMouseMove}
-              onTouchMove={handleTouchMove}
-              style={{ '--clip-percent': `${clipPercent}%` }}
-            >
-              {/* Raw Image (Before) */}
-              <img src="/raw.png" className="split-image" alt="Raw Quality" />
-              <div className="split-label split-label-before">Raw Stream</div>
-              
-              {/* Enhanced Image (After) */}
-              <div className="split-overlay">
-                <img src="/enhanced.png" className="split-image" alt="Enhanced Quality" style={{ width: '100%', height: '100%' }} />
-              </div>
-              <div className="split-label split-label-after">GPU Enhanced</div>
-
-              {/* Slider Split Line */}
-              <div className="split-bar"></div>
-              
-              {/* Slider Handle */}
-              <div className="split-handle">
-                <span className="material-icons-round" style={{ fontSize: '18px' }}>unfold_more</span>
-              </div>
-            </div>
-            <p style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center', marginTop: '12px' }}>
-              Drag or hover your cursor over the image to compare the real-time deband & sharpen shader effects!
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── INTERACTIVE SUBTITLE CUSTOMIZER ── */}
-      <section style={{ padding: '80px 0', borderTop: '1px solid var(--border-light)' }}>
-        <div className="container" style={{
-          display: 'grid',
-          gridTemplateColumns: '1.1fr 0.9fr',
-          gap: '48px',
-          alignItems: 'center'
-        }}>
-          {/* Interactive Preview Container */}
-          <div>
-            <div className="sub-preview-box">
-              <img src="/enhanced.png" className="sub-video-bg" alt="Subtitle preview background" />
-              
-              {/* Simulated Subtitle Text Overlay */}
-              <div style={{
-                position: 'absolute',
-                bottom: '15%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                textAlign: 'center',
-                width: '85%'
-              }}>
-                <span style={{
-                  display: 'inline-block',
-                  lineHeight: '1.4',
-                  fontFamily: subFont === 'Outfit' ? 'var(--font-heading)' : subFont,
-                  color: subColor,
-                  fontSize: `${subSize}px`,
-                  fontWeight: isSubBold ? '700' : '500',
-                  fontStyle: isSubItalic ? 'italic' : 'normal',
-                  padding: '4px 12px',
-                  borderRadius: '6px',
-                  backgroundColor: subBgOpacity > 0 ? `rgba(0,0,0,${subBgOpacity})` : 'transparent',
-                  textShadow: isSubShadow 
-                    ? '1.5px 1.5px 0px #000, -1.5px 1.5px 0px #000, 1.5px -1.5px 0px #000, -1.5px -1.5px 0px #000' 
-                    : 'none',
-                  transition: 'all 0.15s ease-out'
-                }}>
-                  watchAny makes subtitles look absolutely gorgeous.
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Subtitle Controls */}
-          <div>
-            <h2 style={{ fontSize: '36px', marginBottom: '16px', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
-              Your Subtitles, <br />
-              <span className="gradient-text-teal">Your Perfect Style</span>
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14.5px', marginBottom: '24px' }}>
-              Fine-tune the size, fonts, background opacity, outline shadow, and colors. Changes save instantly to your device configuration.
-            </p>
-
-            <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Font Family */}
-              <div>
-                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '8px' }}>FONT FAMILY</span>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {['Outfit', 'Inter', 'monospace', 'serif'].map((font) => (
-                    <button 
-                      key={font}
-                      onClick={() => setSubFont(font)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: '1px solid',
-                        borderColor: subFont === font ? 'var(--accent-teal)' : 'var(--border-light)',
-                        background: subFont === font ? 'rgba(46, 196, 182, 0.1)' : 'transparent',
-                        color: subFont === font ? 'var(--accent-teal)' : 'var(--text-secondary)',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        fontWeight: 600,
-                        textTransform: 'capitalize'
-                      }}
-                    >
-                      {font}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Subtitle Colors */}
-              <div>
-                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '8px' }}>TEXT COLOR</span>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {[
-                    { hex: '#FFFFFF', name: 'White' },
-                    { hex: '#FFFF00', name: 'Yellow' },
-                    { hex: '#2EC4B6', name: 'Teal' },
-                    { hex: '#00FFFF', name: 'Cyan' }
-                  ].map((color) => (
-                    <button 
-                      key={color.hex}
-                      onClick={() => setSubColor(color.hex)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: '1px solid',
-                        borderColor: subColor === color.hex ? 'var(--accent-teal)' : 'var(--border-light)',
-                        background: 'transparent',
-                        color: color.hex,
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        fontWeight: 600
-                      }}
-                    >
-                      {color.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Opacity and Size */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '8px' }}>SIZE ({subSize}px)</span>
-                  <input 
-                    type="range" 
-                    min="14" 
-                    max="28" 
-                    value={subSize}
-                    onChange={(e) => setSubSize(parseInt(e.target.value))}
-                    style={{ width: '100%', accentColor: 'var(--accent-teal)' }}
-                  />
-                </div>
-                <div>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '8px' }}>BACKGROUND OPACITY ({Math.round(subBgOpacity * 100)}%)</span>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={subBgOpacity * 100}
-                    onChange={(e) => setSubBgOpacity(parseFloat(e.target.value) / 100)}
-                    style={{ width: '100%', accentColor: 'var(--accent-teal)' }}
-                  />
-                </div>
-              </div>
-
-              {/* Toggles */}
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                  <input type="checkbox" checked={isSubBold} onChange={(e) => setIsSubBold(e.target.checked)} style={{ accentColor: 'var(--accent-teal)' }} /> Bold
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                  <input type="checkbox" checked={isSubItalic} onChange={(e) => setIsSubItalic(e.target.checked)} style={{ accentColor: 'var(--accent-teal)' }} /> Italic
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                  <input type="checkbox" checked={isSubShadow} onChange={(e) => setIsSubShadow(e.target.checked)} style={{ accentColor: 'var(--accent-teal)' }} /> Text Outline Shadow
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── SIMULATED LIVE DOWNLOADS ── */}
-      <section style={{ padding: '80px 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-light)' }}>
-        <div className="container" style={{
-          display: 'grid',
-          gridTemplateColumns: '0.95fr 1.05fr',
-          gap: '48px',
-          alignItems: 'center'
-        }}>
-          {/* Download manager text */}
-          <div>
-            <h2 style={{ fontSize: '36px', marginBottom: '16px', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
-              High-Speed Downloads <br />
-              <span className="gradient-text-teal">Persistent Storage</span>
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '24px', lineHeight: 1.6 }}>
-              Download complete anime batches, movie torrents, or TV episodes directly to your local storage. Speed calculations, multi-threaded tasks, and download progress bar updates happen dynamically in real time.
-            </p>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: '16px' }}>
-              <span className="material-icons-round" style={{ color: 'var(--accent-teal)', fontSize: '20px' }}>storage</span>
-              <div>
-                <h4 style={{ fontSize: '15px', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>Secure Documents Folder</h4>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Download records are safely preserved in standard app documents folder so they survive package updates.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Download Simulator widget */}
-          <div>
-            <div className="glass-panel dl-sim-card" style={{ background: '#08080C' }}>
-              <div style={{ display: 'flex', justifyBetween: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px' }}>
-                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '14px', color: 'white' }}>DOWNLOAD MANAGER</span>
-                <span style={{ fontSize: '11px', color: 'var(--accent-teal)', fontWeight: 600, fontFamily: 'monospace', marginLeft: 'auto' }}>ACTIVE SPEED: {dlSpeed} MB/s</span>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {/* Active Download */}
-                <div style={{ background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
-                  <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: '12.5px', marginBottom: '6px' }}>
-                    <span style={{ fontWeight: 600, color: 'white' }}>Frieren: Beyond Journey's End - EP 12</span>
-                    <span style={{ fontFamily: 'monospace', color: 'var(--accent-teal)', marginLeft: 'auto' }}>{dlProgress}%</span>
-                  </div>
-                  <div className="progress-bar-container" style={{ marginBottom: '6px' }}>
-                    <div className="progress-bar-fill" style={{ width: `${dlProgress}%` }}></div>
-                  </div>
-                  <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: '10.5px', color: 'var(--text-muted)' }}>
-                    <span>{(1.2 * (dlProgress / 100)).toFixed(2)} GB / 1.20 GB</span>
-                    <span style={{ marginLeft: 'auto' }}>Downloading...</span>
-                  </div>
-                </div>
-
-                {/* Completed Download */}
-                <div style={{ padding: '12px', display: 'flex', justifyBetween: 'space-between', alignItems: 'center', opacity: 0.65 }}>
-                  <div>
-                    <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'white' }}>Demon Slayer: Kimetsu no Yaiba - EP 04</div>
-                    <div style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>1.10 GB • Completed</div>
-                  </div>
-                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(46, 196, 182, 0.1)', border: '1px solid var(--accent-teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-teal)', marginLeft: 'auto' }}>
-                    <span className="material-icons-round" style={{ fontSize: '14px' }}>check</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -688,7 +652,6 @@ function App() {
             <NavigationLink to="/wiki" label="Wiki Docs" />
             
             <Link to="/#download" onClick={() => {
-              // Scroll to download card after routing if on home page
               setTimeout(() => {
                 const el = document.getElementById('download');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });

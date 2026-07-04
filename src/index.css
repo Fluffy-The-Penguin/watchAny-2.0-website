@@ -1,12 +1,13 @@
 :root {
-  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Google Sans Flex', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'Fira Code', 'Courier New', Courier, monospace;
   
-  /* Obsidian Space Theme Colors */
-  --bg-primary: #040406;
-  --bg-secondary: #0A0A0E;
-  --bg-tertiary: #111116;
+  /* Deep Obsidian Design System */
+  --bg-primary: #050508;
+  --bg-secondary: #0A0A0F;
+  --bg-tertiary: #101016;
+  --bg-panel: rgba(10, 10, 15, 0.45);
   
   --accent-orange: #FF9F1C;
   --accent-orange-hover: #FFAE3C;
@@ -19,13 +20,13 @@
   --text-secondary: #94A3B8;
   --text-muted: #475569;
   
-  --border-light: rgba(255, 255, 255, 0.04);
-  --border-medium: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(255, 159, 28, 0.15);
+  --border-light: rgba(255, 255, 255, 0.05);
+  --border-medium: rgba(255, 255, 255, 0.09);
+  --border-glow: rgba(255, 159, 28, 0.2);
   
-  --glow-orange: 0 0 20px rgba(255, 159, 28, 0.22);
-  --glow-teal: 0 0 20px rgba(46, 196, 182, 0.22);
-  --glow-blue: 0 0 20px rgba(59, 130, 246, 0.22);
+  --glow-orange: 0 0 25px rgba(255, 159, 28, 0.25);
+  --glow-teal: 0 0 25px rgba(46, 196, 182, 0.25);
+  --glow-blue: 0 0 25px rgba(59, 130, 246, 0.25);
   
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: all 0.15s ease-out;
@@ -52,7 +53,7 @@ h1, h2, h3, h4 {
   letter-spacing: -0.02em;
 }
 
-/* Coordinates/Grid Background (Antigravity Style) */
+/* Background coordinates grid system (Antigravity Style) */
 .bg-grid {
   position: fixed;
   top: 0;
@@ -61,10 +62,10 @@ h1, h2, h3, h4 {
   height: 100vh;
   z-index: -2;
   background-image: 
-    radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.035) 0%, transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(255, 159, 28, 0.03) 0%, transparent 40%),
-    linear-gradient(rgba(255, 255, 255, 0.004) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.004) 1px, transparent 1px);
+    radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(255, 159, 28, 0.03) 0%, transparent 45%),
+    linear-gradient(rgba(255, 255, 255, 0.003) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.003) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
 }
 
@@ -75,7 +76,7 @@ h1, h2, h3, h4 {
   border-radius: 50%;
   filter: blur(140px);
   z-index: -1;
-  opacity: 0.12;
+  opacity: 0.15;
   pointer-events: none;
 }
 
@@ -101,11 +102,11 @@ h1, h2, h3, h4 {
   background: var(--text-muted);
 }
 
-/* Translucent Glassmorphic Cards */
+/* Glassmorphism Panels */
 .glass-panel {
-  background: rgba(10, 10, 14, 0.45);
-  backdrop-filter: blur(16px) saturate(130%);
-  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  background: var(--bg-panel);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
   border: 1px solid var(--border-light);
   border-radius: 12px;
   transition: var(--transition-smooth);
@@ -114,136 +115,113 @@ h1, h2, h3, h4 {
 .glass-panel:hover {
   border-color: var(--border-medium);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  transform: translateY(-2px);
 }
 
-/* Antigravity Terminal Component */
-.terminal-window {
-  background: #020203;
+/* Interactive Developer Cockpit Panel */
+.cockpit-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+  background: rgba(10, 10, 15, 0.2);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+
+/* Simulated Code Editor / Command Prompt Console */
+.console-window {
+  background: #020204;
   border: 1px solid var(--border-medium);
   border-radius: 10px;
   font-family: var(--font-mono);
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 400px;
 }
 
-.terminal-header {
-  background: #0a0a0f;
-  padding: 10px 16px;
+.console-header {
+  background: #09090e;
+  padding: 12px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-light);
 }
 
-.terminal-dots {
+.console-tab {
+  color: var(--accent-orange);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.console-dots {
   display: flex;
   gap: 6px;
 }
 
-.terminal-dot {
-  width: 10px;
-  height: 10px;
+.console-dot {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
 }
 
-.terminal-content {
-  padding: 16px;
+.console-body {
+  padding: 20px;
+  flex-grow: 1;
   font-size: 13px;
   color: #38BDF8;
   line-height: 1.6;
-  max-height: 320px;
   overflow-y: auto;
 }
 
-/* Navigation layout indicators */
-.nav-link {
+.console-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
+  width: 100%;
+  text-align: left;
   transition: var(--transition-fast);
-  text-decoration: none;
-  position: relative;
-  padding: 6px 0;
 }
 
-.nav-link:hover {
-  color: var(--text-primary);
-}
-
-.nav-link.active {
+.console-action-btn:hover {
+  background: rgba(255, 159, 28, 0.08);
+  border-color: rgba(255, 159, 28, 0.3);
   color: var(--accent-orange);
 }
 
-.nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--accent-orange);
-  box-shadow: var(--glow-orange);
+.console-action-btn.active {
+  background: rgba(255, 159, 28, 0.1);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
 }
 
-/* Primary Button Design */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, var(--accent-orange) 0%, #E65F00 100%);
-  color: #000;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 14px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition-fast);
-  box-shadow: var(--glow-orange);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(255, 159, 28, 0.45);
-  background: linear-gradient(135deg, var(--accent-orange-hover) 0%, #FF6F00 100%);
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-primary);
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 14px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: 1px solid var(--border-light);
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: var(--border-medium);
-  transform: translateY(-2px);
-}
-
-/* Quality Enhancement Comparison Slider */
+/* Split Compare Quality enhancement Slider widget */
 .split-viewer {
   width: 100%;
   aspect-ratio: 16/9;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid var(--border-medium);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   cursor: ew-resize;
   user-select: none;
 }
@@ -276,7 +254,7 @@ h1, h2, h3, h4 {
   background: white;
   z-index: 10;
   transform: translateX(-50%);
-  box-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 4px rgba(255,159,28,0.8);
+  box-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 4px var(--accent-orange);
 }
 
 .split-handle {
@@ -297,61 +275,83 @@ h1, h2, h3, h4 {
   border: 2px solid var(--accent-orange);
 }
 
-.split-label {
-  position: absolute;
-  top: 16px;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: var(--font-heading);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-  border: 1px solid rgba(255,255,255,0.1);
-  z-index: 5;
-}
-
-.split-label-before {
-  right: 16px;
-  color: var(--text-secondary);
-}
-
-.split-label-after {
-  left: 16px;
-  color: var(--accent-orange);
-  border-color: rgba(255, 159, 28, 0.3);
-}
-
-/* Accordion Accordance (Wiki / FAQ styling) */
-.accordion-item {
-  border-bottom: 1px solid var(--border-light);
-  overflow: hidden;
-}
-
-.accordion-header {
-  padding: 18px 24px;
-  display: flex;
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--accent-orange) 0%, #E65F00 100%);
+  color: #000;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
-  background: transparent;
+  transition: var(--transition-fast);
+  box-shadow: var(--glow-orange);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(255, 159, 28, 0.45);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
   transition: var(--transition-fast);
 }
 
-.accordion-header:hover {
-  background: rgba(255, 255, 255, 0.015);
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
 }
 
-.accordion-content {
-  padding: 0 24px 20px 24px;
+/* Nav Links active classes */
+.nav-link {
   color: var(--text-secondary);
-  font-size: 14.5px;
-  line-height: 1.6;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--transition-fast);
+  text-decoration: none;
+  position: relative;
+  padding: 6px 0;
 }
 
-/* Gradient Texts */
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.nav-link.active {
+  color: var(--accent-orange);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent-orange);
+  box-shadow: var(--glow-orange);
+}
+
+/* Text Gradients */
 .gradient-text-orange {
   background: linear-gradient(135deg, #FFF 30%, var(--accent-orange) 100%);
   -webkit-background-clip: text;
@@ -370,7 +370,7 @@ h1, h2, h3, h4 {
   -webkit-text-fill-color: transparent;
 }
 
-/* Animations */
+/* Float animations */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
