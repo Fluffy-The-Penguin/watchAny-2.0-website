@@ -205,12 +205,12 @@ nav.scrolled {
   width: 110%;
   max-width: 720px;
   transform-style: preserve-3d;
-  transform: rotateX(6deg) rotateY(20deg) rotateZ(-2deg);
+  transform: rotateX(6deg) rotateY(-20deg) rotateZ(2deg);
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 
-    -20px 30px 60px rgba(0, 0, 0, 0.7),
+    20px 30px 60px rgba(0, 0, 0, 0.7),
     0px 0px 40px rgba(99, 102, 241, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: #000;
@@ -1545,19 +1545,19 @@ function simulatePlay(title, subtitle) {
       const dx = (x - centerX) / centerX;
       const dy = (centerY - y) / centerY;
       
-      // Pivot mouse tilt around the default door angle (Y=20, X=6, Z=-2)
+      // Pivot mouse tilt around the default door angle (Y=-20, X=6, Z=2)
       const maxDelta = 8;
       const rotateX = 6 + (dy * maxDelta);
-      const rotateY = 20 + (dx * maxDelta);
-      const rotateZ = -2;
+      const rotateY = -20 + (dx * maxDelta);
+      const rotateZ = 2;
       
       card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(1.05)`;
-      card.style.boxShadow = `${-dx * 20}px ${-dy * 20 + 30}px 70px rgba(0, 0, 0, 0.75), 0 0 50px rgba(99, 102, 241, 0.25)`;
+      card.style.boxShadow = `${dx * 20 + 20}px ${-dy * 20 + 30}px 70px rgba(0, 0, 0, 0.75), 0 0 50px rgba(99, 102, 241, 0.25)`;
     };
     
     const handleMouseLeave = () => {
-      card.style.transform = 'rotateX(6deg) rotateY(20deg) rotateZ(-2deg) scale(1)';
-      card.style.boxShadow = '-20px 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.15)';
+      card.style.transform = 'rotateX(6deg) rotateY(-20deg) rotateZ(2deg) scale(1)';
+      card.style.boxShadow = '20px 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.15)';
     };
     
     parent.addEventListener('mousemove', handleMouseMove);
