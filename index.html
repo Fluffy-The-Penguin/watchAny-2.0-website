@@ -7,6 +7,79 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
+/* ── SCROLL PROGRESS ── */
+#scroll-progress{position:fixed;top:0;left:0;z-index:9001;height:2px;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa,#818cf8);transition:width .08s linear;pointer-events:none;}
+
+/* ── HERO META ── */
+.hero-meta{display:flex;align-items:center;gap:1.25rem;margin-top:-.5rem;}
+.hero-ver-pill{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.55);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:.35rem .85rem;text-decoration:none;transition:border-color .2s,color .2s;}
+.hero-ver-pill:hover{border-color:rgba(255,255,255,.25);color:#fff;}
+.ver-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 6px #22c55e;}
+.hero-star-count{font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.38);display:flex;align-items:center;gap:.4rem;}
+
+/* ── VIDEO FRAME ── */
+.video-frame{max-width:1100px;margin:0 auto 4rem;border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden;background:#0a0a0a;box-shadow:0 40px 100px rgba(0,0,0,.7);}
+.vf-chrome{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;background:#111;border-bottom:1px solid rgba(255,255,255,.07);}
+.vf-dots{display:flex;gap:.5rem;}
+.vf-dots span{width:10px;height:10px;border-radius:50%;}
+.vf-dots span:nth-child(1){background:#ff5f57;}
+.vf-dots span:nth-child(2){background:#febc2e;}
+.vf-dots span:nth-child(3){background:#28c840;}
+.vf-title{font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.35);margin:0 auto;}
+.vf-spacer{width:52px;}
+.vf-body{position:relative;}
+.vf-body video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;}
+.vf-placeholder{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#0d0d12 0%,#0a0a14 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.vfp-inner{position:relative;z-index:2;text-align:center;}
+.vfp-icon{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 1.25rem;cursor:pointer;transition:background .2s,transform .2s;}
+.vfp-icon:hover{background:rgba(255,255,255,.1);transform:scale(1.06);}
+.vfp-text{font-size:1rem;font-weight:600;color:rgba(255,255,255,.55);margin-bottom:.4rem;}
+.vfp-sub{font-family:var(--mono);font-size:.7rem;color:rgba(255,255,255,.25);}
+.vfp-sub code{color:rgba(167,139,250,.6);}
+.vfp-shimmer{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.015) 50%,transparent 60%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── SCREENSHOTS CAROUSEL ── */
+.screenshots-section{max-width:1100px;margin:0 auto 0;}
+.ss-label{font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;}
+.ss-label::before{content:'';display:inline-block;width:24px;height:1px;background:var(--muted);}
+.ss-track-wrap{position:relative;display:flex;align-items:center;gap:.75rem;}
+.ss-track{display:flex;gap:1.25rem;overflow:hidden;flex:1;scroll-snap-type:x mandatory;}
+.ss-slide{flex-shrink:0;width:calc(50% - .625rem);scroll-snap-align:start;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.08);transition:border-color .2s,transform .2s;cursor:pointer;}
+.ss-slide:hover{border-color:rgba(255,255,255,.18);transform:translateY(-3px);}
+.ss-slide img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;}
+.ss-slide-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0d0d12,#0a0a14);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:rgba(255,255,255,.2);font-family:var(--mono);}
+.ss-arrow{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-size:1.2rem;cursor:pointer;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.ss-arrow:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25);}
+.ss-dots{display:flex;gap:.5rem;justify-content:center;margin-top:1.25rem;}
+.ss-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);transition:background .2s,transform .2s;cursor:pointer;}
+.ss-dot.active{background:#fff;transform:scale(1.25);}
+
+/* ── FEATURE CARD TILT ── */
+.feature-row{transition:background .25s,transform .2s;}
+.feature-row:hover{background:var(--bg2);transform:perspective(800px) rotateX(.5deg) scale(1.005);}
+
+/* ── FAQ HOME ── */
+.faq-section{border-top:1px solid var(--line);}
+.faq-list-home{border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+.faqh-item{border-bottom:1px solid var(--line);}
+.faqh-item:last-child{border-bottom:none;}
+.faqh-q{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.75rem;cursor:pointer;font-size:.9rem;font-weight:500;transition:background .15s;gap:1rem;user-select:none;}
+.faqh-q:hover{background:rgba(255,255,255,.03);}
+.faqh-arrow{color:rgba(255,255,255,.3);transition:transform .25s;flex-shrink:0;}
+.faqh-item.open .faqh-arrow{transform:rotate(180deg);color:#a78bfa;}
+.faqh-a{display:none;padding:.25rem 1.75rem 1.2rem;font-size:.875rem;color:var(--muted2);line-height:1.7;}
+.faqh-a code{font-family:var(--mono);font-size:.8rem;color:#a78bfa;background:rgba(167,139,250,.08);padding:.1rem .35rem;border-radius:3px;}
+.faqh-item.open .faqh-a{display:block;}
+
+/* ── PLATFORM BADGES ── */
+.cta-platforms{display:flex;gap:1.25rem;margin-top:1.75rem;flex-wrap:wrap;}
+.plat-badge{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;transition:border-color .2s;}
+.plat-badge:hover{border-color:rgba(255,255,255,.2);}
+.plat-badge svg{opacity:.5;flex-shrink:0;}
+.plat-name{font-size:.85rem;font-weight:600;}
+.plat-ver{font-size:.72rem;color:var(--muted);font-family:var(--mono);}
+
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
   --bg: #050505;
@@ -808,11 +881,18 @@ footer {
 }
 
 /* ── RESPONSIVE ── */
+@media (hover: none) and (pointer: coarse) {
+  #cursor { display: none !important; }
+  body { cursor: auto !important; }
+}
 @media (max-width:1024px) {
   .hero-content { grid-template-columns:1fr; gap:3.5rem; text-align:center; }
   .hero-left { align-items:center; }
   .hero-bottom { align-items:center; }
   .hero-desc { text-align:center; }
+  .hero-meta { justify-content:center; }
+  .hero-mockup-card { width:100%; max-width:540px; transform:none; box-shadow:0 15px 35px rgba(0,0,0,0.5); }
+  .hero-right { perspective:none; width:100%; display:flex; justify-content:center; }
   .stats-band { grid-template-columns:1fr 1fr; }
   .stat-cell:nth-child(2) { border-right:none; }
   .stat-cell:nth-child(3) { border-right:1px solid var(--line); }
@@ -830,24 +910,36 @@ footer {
   .nav-cta { display:none; }
   .nav-toggle { display:flex; }
   .hero { padding:8rem 1.5rem 4rem; }
-  .hero-bottom { flex-direction:column; align-items:flex-start; }
+  .hero-bottom { align-items:center; text-align:center; }
+  .hero-actions { justify-content:center; width:100%; }
   .section { padding:6rem 1.5rem; }
   .section-full { padding:6rem 1.5rem; }
   .s-title { font-size:2rem; }
   .stats-band { grid-template-columns:1fr 1fr; }
   .stat-cell { padding:2rem 1.5rem; }
-  .cta-section { flex-direction:column; padding:6rem 1.5rem; }
+  .cta-section { flex-direction:column; padding:6rem 1.5rem; text-align:center; align-items:center; }
+  .cta-left { align-items:center; text-align:center; }
+  .cta-platforms { justify-content:center; }
   .hiw-grid { grid-template-columns:1fr; }
   .hiw-cell { border-right:none; border-bottom:1px solid var(--line); }
   .hiw-cell:last-child { border-bottom:none; }
-  footer { flex-direction:column; padding:2rem 1.5rem; }
-  .app-screen { grid-template-columns:1fr; }
-  .app-sidebar { display:none; }
-  .media-grid { grid-template-columns:repeat(3,1fr); }
+  footer { flex-direction:column; padding:2rem 1.5rem; gap:1.5rem; text-align:center; }
+  .footer-links { justify-content:center; flex-wrap:wrap; }
+  .ss-slide { width:100%; }
+}
+@media (max-width:480px) {
+  .stats-band { grid-template-columns:1fr; }
+  .stat-cell { border-right:none !important; border-bottom:1px solid var(--line); }
+  .stat-cell:last-child { border-bottom:none; }
+  .hero-actions { flex-direction:column; width:100%; gap:0.75rem; }
+  .hero-actions a { width:100%; justify-content:center; }
 }
 </style>
 </head>
 <body>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
 
 <!-- CURSOR -->
 <div id="cursor"></div>
@@ -915,7 +1007,13 @@ footer {
         </p>
         <div class="hero-actions">
           <a href="/download" class="btn-white">⬇ Download Now</a>
-          <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank" class="btn-ghost">★ GitHub</a>
+          <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank" class="btn-ghost" id="hero-gh-btn">★ GitHub</a>
+        </div>
+        <div class="hero-meta">
+          <a class="hero-ver-pill" id="hero-ver-pill" href="https://github.com/Fluffy-The-Penguin/watchAny-2.0/releases/latest" target="_blank">
+            <span class="ver-dot"></span> <span id="hero-ver-text">Loading…</span>
+          </a>
+          <span class="hero-star-count" id="hero-star-count"></span>
         </div>
       </div>
     </div>
@@ -938,7 +1036,7 @@ footer {
 <!-- STATS -->
 <div class="stats-band">
   <div class="stat-cell r">
-    <div class="stat-n" id="stat-ver">v2.0</div>
+    <div class="stat-n" id="stat-ver">—</div>
     <div class="stat-l">Latest Version</div>
   </div>
   <div class="stat-cell r d1">
@@ -946,8 +1044,8 @@ footer {
     <div class="stat-l">Total Releases</div>
   </div>
   <div class="stat-cell r d2">
-    <div class="stat-n">5</div>
-    <div class="stat-l">Supported Architectures</div>
+    <div class="stat-n" id="stat-stars">—</div>
+    <div class="stat-l">GitHub Stars</div>
   </div>
   <div class="stat-cell r d3">
     <div class="stat-n">100%</div>
@@ -1008,9 +1106,49 @@ footer {
   </div>
 </div>
 
-<!-- APP PREVIEW -->
+<!-- APP PREVIEW / VIDEO / SCREENSHOTS -->
 <div class="app-preview-section">
-  <div class="s-label r" style="padding:0 0 2rem;">App Preview</div>
+  <div class="s-label r" style="padding:0 0 2rem;">App Showcase</div>
+
+  <!-- VIDEO PLAYER FRAME -->
+  <div class="video-frame r d1">
+    <div class="vf-chrome">
+      <div class="vf-dots"><span></span><span></span><span></span></div>
+      <div class="vf-title">watchAny 2.0 — Live Demo</div>
+      <div class="vf-spacer"></div>
+    </div>
+    <div class="vf-body">
+      <!-- REPLACE PLACEHOLDER WITH VIDEO TAG ONCE READY:
+      <video autoplay muted loop playsinline width="100%">
+        <source src="demo.mp4" type="video/mp4">
+      </video> -->
+      <div class="vf-placeholder" id="vf-placeholder">
+        <div class="vfp-inner">
+          <div class="vfp-icon">▶</div>
+          <div class="vfp-text">Video preview coming soon</div>
+          <div class="vfp-sub">Replace <code>vf-placeholder</code> with a <code>&lt;video&gt;</code> tag</div>
+        </div>
+        <div class="vfp-shimmer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREENSHOTS CAROUSEL -->
+  <div class="screenshots-section r d2" id="gallery">
+    <div class="ss-label">Interface Gallery</div>
+    <div class="ss-track-wrap">
+      <button class="ss-arrow ss-prev" id="ss-prev" aria-label="Previous Slide">‹</button>
+      <div class="ss-track" id="ss-track">
+        <!-- populated dynamically by JS from gallery/ folder images -->
+      </div>
+      <button class="ss-arrow ss-next" id="ss-next" aria-label="Next Slide">›</button>
+    </div>
+    <div class="ss-dots" id="ss-dots"></div>
+  </div>
+</div>
+
+<!-- Hidden old app preview for backward compatibility -->
+<div style="display:none">
   <div class="app-preview-wrap r">
     <div class="app-topbar">
       <div class="tb-dot tb-red"></div>
@@ -1030,10 +1168,7 @@ footer {
         <div class="sidebar-item" data-tab="favorites"><span class="sidebar-icon">⭐</span> Favorites</div>
         <div class="sidebar-item" data-tab="settings"><span class="sidebar-icon">⚙</span> Settings</div>
       </div>
-      
-      <!-- Interactive Main Container -->
       <div class="app-main" id="app-preview-content">
-        <!-- Default: Home Tab -->
         <div class="app-search">
           <span>🔍</span>
           <span>Search or paste a URL / magnet link...</span>
@@ -1049,68 +1184,8 @@ footer {
               <div class="progress-mini"><div class="progress-mini-fill" style="width:65%"></div></div>
             </div>
           </div>
-          <div class="media-card" onclick="simulatePlay('Eclipse S02E04', '1080p · AAC Dual Audio')">
-            <div class="mc-art">E</div>
-            <div class="media-card-overlay"></div>
-            <div class="media-card-info">
-              <div class="media-card-title">Eclipse S02E04</div>
-              <div class="media-card-sub">1080p</div>
-              <div class="progress-mini"><div class="progress-mini-fill" style="width:30%"></div></div>
-            </div>
-          </div>
-          <div class="media-card" onclick="simulatePlay('Infinite Loop', '4K · Dolby Vision · TrueHD')">
-            <div class="mc-art">∞</div>
-            <div class="media-card-overlay"></div>
-            <div class="media-card-info">
-              <div class="media-card-title">Infinite Loop</div>
-              <div class="media-card-sub">4K · DV</div>
-              <div class="progress-mini"><div class="progress-mini-fill" style="width:82%"></div></div>
-            </div>
-          </div>
-          <div class="media-card" onclick="simulatePlay('Apex S01E01', 'Live HLS Stream · 1080p')">
-            <div class="mc-art">▲</div>
-            <div class="media-card-overlay"></div>
-            <div class="media-card-info">
-              <div class="media-card-title">Apex S01E01</div>
-              <div class="media-card-sub">Streaming</div>
-              <div class="progress-mini"><div class="progress-mini-fill" style="width:12%"></div></div>
-            </div>
-          </div>
-          <div class="media-card" onclick="simulatePlay('Unknown.mkv', 'Local File · HEVC 10bit')">
-            <div class="mc-art">◈</div>
-            <div class="media-card-overlay"></div>
-            <div class="media-card-info">
-              <div class="media-card-title">Unknown.mkv</div>
-              <div class="media-card-sub">Local</div>
-              <div class="progress-mini"><div class="progress-mini-fill" style="width:50%"></div></div>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Player Bar -->
-    <div class="app-player-bar">
-      <div class="player-now">
-        <div class="player-thumb" id="player-mock-thumb">🎬</div>
-        <div class="player-info">
-          <div class="player-title" id="player-mock-title">Midnight Run (2024)</div>
-          <div class="player-sub" id="player-mock-sub">4K · HDR · H.265 · TrueHD 7.1</div>
-        </div>
-      </div>
-      <div class="player-controls">
-        <div class="pc-buttons">
-          <button class="pc-btn">⏮</button>
-          <button class="pc-btn">⏪</button>
-          <button class="pc-btn play" id="player-play-btn" onclick="togglePlayState()">▶</button>
-          <button class="pc-btn">⏩</button>
-          <button class="pc-btn">⏭</button>
-        </div>
-        <div class="pc-bar">
-          <div class="pc-fill animating" id="player-progress-bar"><div class="pc-dot"></div></div>
-        </div>
-      </div>
-      <div class="pc-time" id="player-mock-time">38:24 / 1:41:06</div>
     </div>
   </div>
 </div>
@@ -1146,11 +1221,59 @@ footer {
   </div>
 </div>
 
+<!-- FAQ -->
+<div class="faq-section" id="faq">
+  <div style="max-width:900px;margin:0 auto;padding:9rem 2.5rem 6rem;">
+    <div class="s-label r">FAQ</div>
+    <h2 class="s-title r d1" style="margin-bottom:3rem;">Common questions.<br><em>Quick answers.</em></h2>
+    <div class="faq-list-home r d2">
+      <div class="faqh-item">
+        <div class="faqh-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>Is watchAny completely free?</span><span class="faqh-arrow">↓</span>
+        </div>
+        <div class="faqh-a">Yes — zero cost, zero ads, zero subscriptions. It's fully open source under the MIT license. The source code is hosted on GitHub.</div>
+      </div>
+      <div class="faqh-item">
+        <div class="faqh-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>What can it actually play?</span><span class="faqh-arrow">↓</span>
+        </div>
+        <div class="faqh-a">Virtually anything: local MKV/MP4 files, magnet links (torrents) using built-in TorrServer, direct video URL streams, HLS/DASH airings, and customized extensions via HStream.</div>
+      </div>
+      <div class="faqh-item">
+        <div class="faqh-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>Does it support 4K and HDR playback?</span><span class="faqh-arrow">↓</span>
+        </div>
+        <div class="faqh-a">Yes. Under the hood, watchAny features hardware-accelerated playback via libmpv for lag-free 4K, HDR, and HEVC video streams.</div>
+      </div>
+      <div class="faqh-item">
+        <div class="faqh-q" onclick="this.parentElement.classList.toggle('open')">
+          <span>Do I need an account to use it?</span><span class="faqh-arrow">↓</span>
+        </div>
+        <div class="faqh-a">No account required. Connect an AniList profile to synchronize your watch logs and progress, but it is 100% optional.</div>
+      </div>
+    </div>
+    <div style="margin-top:2.5rem;" class="r d3">
+      <a href="/faq" class="btn-ghost" style="font-size:.82rem;">Full FAQ →</a>
+      <a href="https://wiki-watchany.vercel.app" target="_blank" class="btn-ghost" style="font-size:.82rem;margin-left:1rem;">Wiki Docs →</a>
+    </div>
+  </div>
+</div>
+
 <!-- CTA -->
 <div class="cta-section">
   <div class="cta-left r">
     <h2 class="cta-title">Ready to watch<br><em>anything?</em></h2>
     <p class="cta-sub">Free. Open source. No ads. No accounts. Just press play.</p>
+    <div class="cta-platforms">
+      <div class="plat-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+        <div><div class="plat-name">Windows</div><div class="plat-ver">Windows 10 / 11</div></div>
+      </div>
+      <div class="plat-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a.85.85 0 01-.85.85H7.327a.85.85 0 01-.85-.85v-6.5a.85.85 0 01.85-.85h9.346a.85.85 0 01.85.85v6.5zM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM8.5 6.5l-1.5 3h2l-1 4h1l3-5h-2l1.5-2H8.5z"/></svg>
+        <div><div class="plat-name">Android</div><div class="plat-ver">Android 7.0+</div></div>
+      </div>
+    </div>
   </div>
   <div class="cta-right r d2">
     <a href="/download" class="btn-white" style="font-size:1rem;padding:1rem 2.5rem;">Download Free →</a>
@@ -1167,6 +1290,7 @@ footer {
     <li><a href="/download">Download</a></li>
     <li><a href="/gallery">Gallery</a></li>
     <li><a href="/faq">FAQ</a></li>
+    <li><a href="https://wiki-watchany.vercel.app" target="_blank">Wiki</a></li>
     <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
   </ul>
   <div class="footer-right">© 2026 WatchAny — Open Source</div>
@@ -1509,13 +1633,17 @@ function simulatePlay(title, subtitle) {
   progressBar.classList.add('animating');
 }
 
-/* ─── LATEST VERSION FETCH ─── */
+/* ─── LATEST VERSION & STATS FETCH ─── */
 (async()=>{
   try {
     const res = await fetch('https://api.github.com/repos/Fluffy-The-Penguin/watchAny-2.0/releases/latest');
     if(res.ok) {
       const d = await res.json();
-      document.getElementById('stat-ver').textContent = d.tag_name;
+      const ver = d.tag_name;
+      const statVer = document.getElementById('stat-ver');
+      if(statVer) statVer.textContent = ver;
+      const textVer = document.getElementById('hero-ver-text');
+      if(textVer) textVer.textContent = `Latest: ${ver}`;
     }
   }catch(_){}
 })();
@@ -1524,8 +1652,100 @@ function simulatePlay(title, subtitle) {
 (async()=>{
   try {
     const r = await fetch('https://api.github.com/repos/Fluffy-The-Penguin/watchAny-2.0/releases?per_page=100');
-    if(r.ok){ const a=await r.json(); if(Array.isArray(a)) document.getElementById('stat-rel').textContent=a.length; }
+    if(r.ok){ 
+      const a = await r.json(); 
+      if(Array.isArray(a)) {
+        const relEl = document.getElementById('stat-rel');
+        if(relEl) relEl.textContent = a.length;
+      }
+    }
   }catch(_){}
+})();
+
+/* ─── GITHUB STARS FETCH ─── */
+(async()=>{
+  try {
+    const r = await fetch('https://api.github.com/repos/Fluffy-The-Penguin/watchAny-2.0');
+    if(r.ok){ 
+      const data = await r.json(); 
+      const stars = data.stargazers_count;
+      const statStars = document.getElementById('stat-stars');
+      if(statStars) statStars.textContent = stars;
+      const heroStars = document.getElementById('hero-star-count');
+      if(heroStars) heroStars.textContent = `★ ${stars} stars on GitHub`;
+    }
+  }catch(_){}
+})();
+
+/* ─── SCROLL PROGRESS ─── */
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('scroll-progress');
+  if (bar) {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+});
+
+/* ─── SCREENSHOTS CAROUSEL ─── */
+(function(){
+  const images = [
+    { src: 'gallery/home_screen.png', label: 'Desktop Dashboard' },
+    { src: 'gallery/player_screen.png', label: 'Media Player' },
+    { src: 'gallery/anime_details.png', label: 'Anime Details' },
+    { src: 'gallery/manga_details.png', label: 'Manga Reader' }
+  ];
+  const track = document.getElementById('ss-track');
+  const dotsContainer = document.getElementById('ss-dots');
+  const prevBtn = document.getElementById('ss-prev');
+  const nextBtn = document.getElementById('ss-next');
+
+  if (!track) return;
+
+  track.innerHTML = images.map(img => `
+    <div class="ss-slide">
+      <img src="${img.src}" alt="${img.label}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
+      <div class="ss-slide-placeholder" style="display:none">${img.label}</div>
+    </div>
+  `).join('');
+
+  dotsContainer.innerHTML = images.map((_, i) => `
+    <span class="ss-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>
+  `).join('');
+
+  let currentIdx = 0;
+  const dots = dotsContainer.querySelectorAll('.ss-dot');
+
+  const updateSlider = (idx) => {
+    currentIdx = idx;
+    const slide = track.querySelector('.ss-slide');
+    if (!slide) return;
+    const slideWidth = slide.getBoundingClientRect().width;
+    const gap = 20; // 1.25rem = 20px
+    track.scrollTo({
+      left: idx * (slideWidth + gap),
+      behavior: 'smooth'
+    });
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+  };
+
+  prevBtn.addEventListener('click', () => {
+    let prevIdx = currentIdx - 1;
+    if (prevIdx < 0) prevIdx = images.length - 1;
+    updateSlider(prevIdx);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    let nextIdx = currentIdx + 1;
+    if (nextIdx >= images.length) nextIdx = 0;
+    updateSlider(nextIdx);
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      updateSlider(parseInt(dot.getAttribute('data-idx')));
+    });
+  });
 })();
 
 /* ─── 3D PARALLAX MOCKUP HOVER ─── */
@@ -1536,6 +1756,7 @@ function simulatePlay(title, subtitle) {
     const parent = mockup.parentElement;
     
     const handleMouseMove = (e) => {
+      if (window.innerWidth <= 1024) return; // Disable tilt parallax on smaller screens
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -1543,11 +1764,9 @@ function simulatePlay(title, subtitle) {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
       
-      // Calculate cursor offset percentage from center (-1.0 to 1.0)
       const dx = (x - centerX) / centerX;
       const dy = (centerY - y) / centerY;
       
-      // Pivot mouse tilt around the default door angle (Y=-20, X=6, Z=2)
       const maxDelta = 8;
       const rotateX = 6 + (dy * maxDelta);
       const rotateY = -20 + (dx * maxDelta);
@@ -1558,6 +1777,10 @@ function simulatePlay(title, subtitle) {
     };
     
     const handleMouseLeave = () => {
+      if (window.innerWidth <= 1024) {
+        card.style.transform = 'none';
+        return;
+      }
       card.style.transform = 'rotateX(6deg) rotateY(-20deg) rotateZ(2deg) scale(1)';
       card.style.boxShadow = '20px 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.15)';
     };
