@@ -181,9 +181,9 @@ nav.scrolled {
 .hero-content {
   position: relative; z-index: 2;
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: 1fr 1.15fr;
   align-items: center;
-  gap: 4rem;
+  gap: 3rem;
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
@@ -194,7 +194,7 @@ nav.scrolled {
   align-items: flex-start;
 }
 .hero-right {
-  perspective: 1000px;
+  perspective: 1200px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -202,14 +202,17 @@ nav.scrolled {
   z-index: 10;
 }
 .hero-mockup-card {
-  width: 100%;
-  max-width: 580px;
+  width: 110%;
+  max-width: 720px;
   transform-style: preserve-3d;
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  transform: rotateX(6deg) rotateY(20deg) rotateZ(-2deg);
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    -20px 30px 60px rgba(0, 0, 0, 0.7),
+    0px 0px 40px rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   background: #000;
 }
 .mockup-img {
@@ -1538,17 +1541,23 @@ function simulatePlay(title, subtitle) {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
       
-      const maxRotate = 16;
-      const rotateX = ((centerY - y) / centerY) * maxRotate;
-      const rotateY = ((x - centerX) / centerX) * maxRotate;
+      // Calculate cursor offset percentage from center (-1.0 to 1.0)
+      const dx = (x - centerX) / centerX;
+      const dy = (centerY - y) / centerY;
       
-      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
-      card.style.boxShadow = `${-rotateY * 1.5}px ${rotateX * 1.5}px 35px rgba(99, 102, 241, 0.22), 0 35px 70px rgba(0, 0, 0, 0.65)`;
+      // Pivot mouse tilt around the default door angle (Y=20, X=6, Z=-2)
+      const maxDelta = 8;
+      const rotateX = 6 + (dy * maxDelta);
+      const rotateY = 20 + (dx * maxDelta);
+      const rotateZ = -2;
+      
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(1.05)`;
+      card.style.boxShadow = `${-dx * 20}px ${-dy * 20 + 30}px 70px rgba(0, 0, 0, 0.75), 0 0 50px rgba(99, 102, 241, 0.25)`;
     };
     
     const handleMouseLeave = () => {
-      card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
-      card.style.boxShadow = '0 30px 60px rgba(0, 0, 0, 0.4)';
+      card.style.transform = 'rotateX(6deg) rotateY(20deg) rotateZ(-2deg) scale(1)';
+      card.style.boxShadow = '-20px 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.15)';
     };
     
     parent.addEventListener('mousemove', handleMouseMove);
