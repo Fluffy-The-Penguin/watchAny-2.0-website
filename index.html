@@ -1,29 +1,1463 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- SEO Meta Tags -->
-    <title>watchAny — The Ultimate Streamer & Downloader for Anime, Movies & TV</title>
-    <meta name="description" content="Stream and download your favorite anime, movies, and TV shows in real-time. Features GPU-accelerated video quality enhancement, advanced custom subtitles, and offline playback." />
-    <meta name="keywords" content="watchany, anime streamer, anime downloader, torrent stream, video quality enhancement, deband shader, custom subtitles, movie downloader, ad-free streaming" />
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="watchAny — Stream & Download Anime, Movies & TV" />
-    <meta property="og:description" content="Stream and download your favorite anime, movies, and TV shows in real-time. Features GPU-accelerated video quality enhancement, advanced custom subtitles, and offline playback." />
-    <meta property="og:image" content="https://watchany.vercel.app/og-image.png" />
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WatchAny — Stream Everything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #050505;
+  --bg2: #0a0a0a;
+  --bg3: #0f0f0f;
+  --line: rgba(255,255,255,0.06);
+  --line2: rgba(255,255,255,0.1);
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.38);
+  --muted2: rgba(255,255,255,0.55);
+  --mono: 'JetBrains Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: none;
+}
 
-    <!-- Google Fonts & Material Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed; top:0; left:0; z-index:9999;
+  width:10px; height:10px;
+  background:#fff;
+  border-radius:50%;
+  pointer-events:none;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s;
+  mix-blend-mode: difference;
+}
+#cursor.grow { width:40px; height:40px; }
+
+/* ── LOADER ── */
+#loader {
+  position:fixed; inset:0; z-index:9000;
+  background:#050505;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:1.5rem;
+}
+.loader-logo-wrap {
+  position: relative;
+  width: 80px; height: 80px;
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+.loader-logo {
+  width:64px; height:64px;
+  opacity:0;
+  animation: logo-in .6s .2s ease forwards;
+}
+/* Diagonal black sweep slash on the loader logo to match the app startup splash */
+.loader-logo-wrap::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 200%; height: 200%;
+  background: linear-gradient(
+    45deg,
+    rgba(255,255,255,0) 30%,
+    rgba(0,0,0,0.85) 50%,
+    rgba(255,255,255,0) 70%
+  );
+  transform: rotate(30deg);
+  animation: slash-sweep 2.2s infinite ease-in-out;
+}
+@keyframes slash-sweep {
+  0% { transform: translate(-35%, -35%) rotate(30deg); }
+  100% { transform: translate(35%, 35%) rotate(30deg); }
+}
+@keyframes logo-in { to { opacity:1; } }
+.loader-count {
+  font-family: var(--mono);
+  font-size:.8rem;
+  color: var(--muted);
+  letter-spacing:.15em;
+}
+.loader-bar {
+  width:160px; height:1px;
+  background: var(--line2);
+  position:relative; overflow:hidden;
+}
+.loader-fill {
+  position:absolute; inset:0;
+  background:#fff;
+  transform:scaleX(0);
+  transform-origin:left;
+  animation: fill-bar 1.6s cubic-bezier(.4,0,.2,1) .3s forwards;
+}
+@keyframes fill-bar { to { transform:scaleX(1); } }
+#loader.done {
+  opacity:0; pointer-events:none;
+  transition: opacity .5s ease;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:800;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.5rem 2.5rem;
+  transition: background .4s;
+}
+nav.scrolled {
+  background: rgba(5,5,5,.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-left { display:flex; align-items:center; gap:.75rem; }
+.nav-logo { width:28px; }
+.nav-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size:.85rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:#fff;
+}
+.nav-links {
+  display:flex; gap:2rem; list-style:none;
+}
+.nav-links a {
+  font-size:.78rem; font-weight:500;
+  color: var(--muted2); text-decoration:none;
+  letter-spacing:.04em;
+  transition: color .2s;
+}
+.nav-links a:hover { color:#fff; }
+.nav-cta {
+  font-size:.78rem; font-weight:600;
+  color:#000; background:#fff;
+  border:none; border-radius:4px;
+  padding:.5rem 1.2rem;
+  cursor:pointer; text-decoration:none;
+  letter-spacing:.03em;
+  transition: opacity .2s;
+}
+.nav-cta:hover { opacity:.85; }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:flex; flex-direction:column;
+  justify-content:flex-end;
+  padding:0 2.5rem 6rem;
+  position:relative; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0; z-index:0;
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(255,255,255,.03) 0%, transparent 70%);
+}
+/* Deep radial blur glow mesh for premium look */
+.hero-glow {
+  position: absolute;
+  top: 35%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(129, 140, 248, 0.03) 50%, transparent 100%);
+  filter: blur(80px);
+  z-index: 1;
+  pointer-events: none;
+}
+/* Grid lines */
+.hero-grid {
+  position:absolute; inset:0; z-index:0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 30%, transparent 100%);
+  opacity:.6;
+}
+.hero-content { position:relative; z-index:2; }
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:.6rem;
+  font-family: var(--mono);
+  font-size:.7rem; color: var(--muted);
+  letter-spacing:.12em; text-transform:uppercase;
+  margin-bottom:2rem;
+}
+.eyebrow-dot {
+  width:5px; height:5px; border-radius:50%; background:#fff;
+  animation: pulse-dot 2.5s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100%{ opacity:1; }
+  50%{ opacity:.25; }
+}
+.hero-h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(4rem, 11vw, 10rem);
+  font-weight:800;
+  letter-spacing:-.04em;
+  line-height:.92;
+  margin-bottom:3rem;
+}
+.hero-h1 em {
+  font-style:normal;
+  color: var(--muted);
+}
+.hero-bottom {
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:2rem;
+}
+.hero-desc {
+  max-width:380px;
+  font-size:1rem; line-height:1.7;
+  color: var(--muted2);
+  font-weight:300;
+}
+.hero-actions {
+  display:flex; gap:1rem; align-items:center; flex-shrink:0;
+}
+.btn-white {
+  display:inline-flex; align-items:center; gap:.5rem;
+  background:#fff; color:#000;
+  border:none; border-radius:4px;
+  padding:.75rem 1.75rem;
+  font-size:.85rem; font-weight:700;
+  letter-spacing:.03em;
+  cursor:pointer; text-decoration:none;
+  transition: opacity .2s, transform .2s;
+}
+.btn-white:hover { opacity:.88; transform:translateY(-2px); }
+.btn-ghost {
+  display:inline-flex; align-items:center; gap:.5rem;
+  background:transparent; color:var(--muted2);
+  border:1px solid var(--line2);
+  border-radius:4px;
+  padding:.75rem 1.75rem;
+  font-size:.85rem; font-weight:500;
+  letter-spacing:.03em;
+  cursor:pointer; text-decoration:none;
+  transition: border-color .2s, color .2s, transform .2s;
+}
+.btn-ghost:hover { border-color:rgba(255,255,255,.3); color:#fff; transform:translateY(-2px); }
+
+/* ── MARQUEE ── */
+.marquee-section {
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:.9rem 0;
+  overflow:hidden;
+}
+.marquee-track {
+  display:flex; gap:3rem; width:max-content;
+  animation: marquee-scroll 25s linear infinite;
+}
+@keyframes marquee-scroll {
+  from { transform:translateX(0); }
+  to { transform:translateX(-50%); }
+}
+.marquee-item {
+  font-family: var(--mono);
+  font-size:.68rem; color: var(--muted);
+  letter-spacing:.1em; text-transform:uppercase;
+  white-space:nowrap;
+  display:flex; align-items:center; gap:1rem;
+}
+.marquee-item::after {
+  content:'';
+  display:inline-block;
+  width:3px; height:3px; border-radius:50%;
+  background: var(--muted);
+}
+
+/* ── SECTION BASE ── */
+.section {
+  padding:9rem 2.5rem;
+  max-width:1280px; margin:0 auto;
+}
+.section-full {
+  padding:9rem 2.5rem;
+}
+.s-label {
+  font-family: var(--mono);
+  font-size:.68rem; color: var(--muted);
+  letter-spacing:.15em; text-transform:uppercase;
+  margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:.75rem;
+}
+.s-label::before {
+  content:'';
+  display:inline-block;
+  width:24px; height:1px; background:var(--muted);
+}
+.s-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight:800;
+  letter-spacing:-.03em;
+  line-height:1.05;
+}
+.s-title em { font-style:normal; color:var(--muted); }
+.divider { height:1px; background:var(--line); }
+
+/* ── STATS BAND ── */
+.stats-band {
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top:1px solid var(--line);
+}
+.stat-cell {
+  padding:3rem 2.5rem;
+  border-right:1px solid var(--line);
+}
+.stat-cell:last-child { border-right:none; }
+.stat-n {
+  font-size:3.5rem; font-weight:800;
+  letter-spacing:-.04em; line-height:1;
+  margin-bottom:.5rem;
+}
+.stat-l {
+  font-size:.78rem; color:var(--muted);
+  font-weight:400; letter-spacing:.04em;
+}
+
+/* ── FEATURES (2-col table layout) ── */
+.features-table {
+  border-top:1px solid var(--line);
+}
+.feature-row {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--line);
+  transition: background .25s;
+}
+.feature-row:hover { background:var(--bg2); }
+.feature-cell {
+  padding:3.5rem 2.5rem;
+  border-right:1px solid var(--line);
+}
+.feature-cell:last-child { border-right:none; }
+.feat-num {
+  font-family: var(--mono);
+  font-size:.65rem; color:var(--muted);
+  letter-spacing:.1em; margin-bottom:2rem;
+}
+.feat-icon { font-size:1.8rem; margin-bottom:1.5rem; }
+.feat-title {
+  font-size:1.3rem; font-weight:700;
+  letter-spacing:-.02em; margin-bottom:.75rem;
+}
+.feat-desc {
+  font-size:.875rem; color:var(--muted2);
+  line-height:1.75; font-weight:300;
+}
+
+/* ── BIG VISUAL (App Preview) ── */
+.app-preview-section {
+  padding:0 2.5rem 9rem;
+}
+.app-preview-wrap {
+  border:1px solid var(--line);
+  border-radius:6px;
+  overflow:hidden;
+  background:var(--bg2);
+  position:relative;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+}
+.app-topbar {
+  background: var(--bg3);
+  border-bottom:1px solid var(--line);
+  display:flex; align-items:center;
+  padding:.75rem 1.25rem; gap:.5rem;
+}
+.tb-dot { width:10px;height:10px;border-radius:50%; }
+.tb-red { background:#ff5f56; }
+.tb-yellow { background:#ffbd2e; }
+.tb-green { background:#27c93f; }
+.tb-title {
+  flex:1; text-align:center;
+  font-family:var(--mono); font-size:.7rem; color:var(--muted);
+  letter-spacing:.05em;
+}
+.app-screen {
+  display:grid; grid-template-columns:220px 1fr;
+  min-height:480px;
+}
+.app-sidebar {
+  border-right:1px solid var(--line);
+  padding:1.5rem 0;
+  background: rgba(255,255,255,0.01);
+}
+.app-sidebar-logo {
+  padding:.5rem 1.5rem 1.5rem;
+  border-bottom:1px solid var(--line);
+  margin-bottom:1rem;
+}
+.app-sidebar-logo img {
+  width:28px; opacity:.9;
+}
+.sidebar-item {
+  padding:.55rem 1.5rem;
+  font-size:.78rem; color:var(--muted);
+  display:flex; align-items:center; gap:.75rem;
+  cursor:pointer; transition:color .2s, background .2s;
+}
+.sidebar-item:hover, .sidebar-item.active {
+  color:#fff; background:rgba(255,255,255,.04);
+}
+.sidebar-icon { font-size:.9rem; width:18px; text-align:center; }
+.app-main {
+  padding:2rem;
+  display:flex; flex-direction:column; gap:1.5rem;
+}
+.app-search {
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:.65rem 1rem;
+  font-family:var(--mono); font-size:.72rem;
+  color:var(--muted); display:flex; align-items:center; gap:.6rem;
+}
+.media-grid {
+  display:grid;
+  grid-template-columns:repeat(5,1fr); gap:.75rem;
+}
+.media-card {
+  border-radius:4px;
+  overflow:hidden; position:relative;
+  aspect-ratio:2/3;
+  background:var(--bg3);
+  border:1px solid var(--line);
+  display:flex; align-items:flex-end;
+  transition: transform .2s, border-color .2s;
+  cursor: pointer;
+}
+.media-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.2);
+}
+.media-card-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,.9) 0%, transparent 60%);
+}
+.media-card-info {
+  position:relative; padding:.6rem; width: 100%;
+}
+.media-card-title {
+  font-size:.65rem; font-weight:600;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.media-card-sub {
+  font-size:.58rem; color:var(--muted); margin-top:.1rem;
+  font-family:var(--mono);
+}
+/* Abstract art in cards */
+.mc-art {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; color:rgba(255,255,255,.07);
+  font-weight:900;
+}
+.progress-mini {
+  height:2px; background:rgba(255,255,255,.2);
+  border-radius:1px; position:relative;
+  margin-top:.35rem;
+}
+.progress-mini-fill {
+  position:absolute; left:0; top:0; bottom:0;
+  background:#fff; border-radius:1px;
+}
+.app-player-bar {
+  border-top:1px solid var(--line);
+  padding:1rem 2rem;
+  display:flex; align-items:center; gap:1.5rem;
+  background:rgba(255,255,255,.015);
+}
+.player-now {
+  display:flex; align-items:center; gap:1rem;
+  min-width:220px;
+}
+.player-thumb {
+  width:36px; height:36px; border-radius:3px;
+  background:var(--bg3); border:1px solid var(--line);
+  display:grid; place-items:center;
+  font-size:.9rem;
+}
+.player-info { }
+.player-title { font-size:.75rem; font-weight:600; }
+.player-sub { font-size:.65rem; color:var(--muted); font-family:var(--mono); margin-top:.15rem; }
+.player-controls {
+  flex:1; display:flex; flex-direction:column; gap:.4rem; align-items:center;
+}
+.pc-buttons {
+  display:flex; gap:1.25rem; align-items:center;
+}
+.pc-btn {
+  background:none; border:none; color:var(--muted);
+  cursor:pointer; font-size:.9rem;
+  transition:color .2s;
+  font-family:inherit;
+}
+.pc-btn:hover { color:#fff; }
+.pc-btn.play {
+  width:32px; height:32px; border-radius:50%;
+  background:#fff; color:#000;
+  display:grid; place-items:center;
+  font-size:.75rem;
+  font-weight: bold;
+  transition: transform .2s;
+}
+.pc-btn.play:hover {
+  transform: scale(1.1);
+}
+.pc-bar {
+  width:100%; height:2px;
+  background:rgba(255,255,255,.12);
+  border-radius:1px; position:relative;
+  cursor:pointer;
+}
+.pc-fill {
+  position:absolute; left:0; top:0; bottom:0;
+  background:#fff; border-radius:1px; width:35%;
+}
+.pc-fill.animating {
+  animation: play-sim 30s linear infinite;
+}
+@keyframes play-sim { from{width:20%} to{width:95%} }
+.pc-dot {
+  position:absolute; right:0; top:50%;
+  transform:translate(50%,-50%);
+  width:8px; height:8px; border-radius:50%; background:#fff;
+}
+.pc-time {
+  font-family:var(--mono); font-size:.62rem; color:var(--muted);
+  white-space:nowrap;
+}
+
+/* Settings configuration layout styling */
+.settings-list {
+  display:flex; flex-direction:column; gap:1rem; margin-top:.5rem; font-size:.75rem;
+}
+.settings-group-title {
+  font-size:.65rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; font-family:var(--mono); margin-top:.5rem;
+}
+.settings-row {
+  display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:.85rem;
+}
+.settings-label { color:var(--muted2); }
+.settings-val { font-family:var(--mono); color:#fff; }
+.toggle-active { color:#27c93f; font-weight:bold; }
+
+/* ── DOWNLOAD SECTION ── */
+.dl-section { background:var(--bg); }
+.dl-inner {
+  max-width:1280px; margin:0 auto;
+  padding:9rem 2.5rem;
+}
+.dl-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  border:1px solid var(--line);
+  border-radius:4px;
+  overflow:hidden;
+  margin-top:4rem;
+}
+.dl-col {
+  padding:3rem 2.5rem;
+  border-right:1px solid var(--line);
+  position:relative;
+}
+.dl-col:last-child { border-right:none; }
+.dl-col-icon { font-size:2rem; margin-bottom:1.5rem; }
+.dl-col-name {
+  font-family: 'Outfit', sans-serif;
+  font-size:1.4rem; font-weight:800;
+  letter-spacing:-.02em; margin-bottom:.4rem;
+}
+.dl-col-sub {
+  font-size:.8rem; color:var(--muted);
+  line-height:1.6; margin-bottom:2rem;
+}
+.dl-version {
+  font-family:var(--mono);
+  font-size:.65rem; color:var(--muted);
+  letter-spacing:.08em; margin-bottom:1.5rem;
+}
+.dl-items { display:flex; flex-direction:column; gap:.5rem; }
+.dl-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.85rem 1rem;
+  border:1px solid var(--line);
+  color:#fff; text-decoration:none;
+  font-size:.8rem; font-weight:500;
+  transition: background .2s, border-color .2s;
+  cursor:pointer;
+}
+.dl-item:hover {
+  background:rgba(255,255,255,.05);
+  border-color:var(--line2);
+}
+.dl-item-left { }
+.dl-item-name { font-weight:600; font-size:.78rem; margin-bottom:.15rem; }
+.dl-item-meta {
+  font-family:var(--mono);
+  font-size:.62rem; color:var(--muted);
+}
+.dl-item-arrow { color:var(--muted); font-size:.85rem; }
+.dl-loading {
+  padding:1.5rem 0;
+  font-family:var(--mono); font-size:.72rem; color:var(--muted);
+  display:flex; align-items:center; gap:.75rem;
+}
+.spin {
+  width:14px; height:14px;
+  border:1.5px solid rgba(255,255,255,.1);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── HOW IT WORKS ── */
+.hiw-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line);
+  margin-top:4rem;
+}
+.hiw-cell {
+  padding:3rem 2.5rem;
+  border-right:1px solid var(--line);
+}
+.hiw-cell:last-child { border-right:none; }
+.hiw-num {
+  font-family:var(--mono);
+  font-size:.65rem; color:var(--muted);
+  letter-spacing:.12em; margin-bottom:3rem;
+  display:block;
+}
+.hiw-title {
+  font-size:1.1rem; font-weight:700;
+  letter-spacing:-.02em; margin-bottom:.75rem;
+}
+.hiw-desc {
+  font-size:.825rem; color:var(--muted2);
+  line-height:1.75; font-weight:300;
+}
+
+/* ── CTA ── */
+.cta-section {
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:9rem 2.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:3rem;
+}
+.cta-left { max-width:600px; }
+.cta-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight:800; letter-spacing:-.04em;
+  line-height:1; margin-bottom:1.5rem;
+}
+.cta-sub {
+  font-size:1rem; color:var(--muted2);
+  line-height:1.7; font-weight:300;
+}
+.cta-right { flex-shrink:0; }
+
+/* ── FOOTER ── */
+footer {
+  padding:3rem 2.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:1.5rem;
+}
+.footer-left {
+  display:flex; align-items:center; gap:.75rem;
+}
+.footer-logo { width:22px; opacity:.6; }
+.footer-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size:.75rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted);
+}
+.footer-links {
+  display:flex; gap:2rem; list-style:none;
+}
+.footer-links a {
+  font-size:.75rem; color:var(--muted);
+  text-decoration:none; transition:color .2s;
+}
+.footer-links a:hover { color:#fff; }
+.footer-right {
+  font-family:var(--mono);
+  font-size:.65rem; color:var(--muted);
+  letter-spacing:.08em;
+}
+
+/* ── REVEAL ANIMATIONS ── */
+.r {
+  opacity:0; transform:translateY(32px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.r.v { opacity:1; transform:none; }
+.r.d1 { transition-delay:.05s; }
+.r.d2 { transition-delay:.1s; }
+.r.d3 { transition-delay:.15s; }
+.r.d4 { transition-delay:.2s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:1024px) {
+  .stats-band { grid-template-columns:1fr 1fr; }
+  .stat-cell:nth-child(2) { border-right:none; }
+  .stat-cell:nth-child(3) { border-right:1px solid var(--line); }
+  .dl-grid { grid-template-columns:1fr; }
+  .dl-col { border-right:none; border-bottom:1px solid var(--line); }
+  .dl-col:last-child { border-bottom:none; }
+  .hiw-grid { grid-template-columns:1fr 1fr; }
+  .hiw-cell:nth-child(2) { border-right:none; }
+  .feature-row { grid-template-columns:1fr; }
+  .feature-cell { border-right:none; border-bottom:1px solid var(--line); }
+}
+@media (max-width:768px) {
+  nav { padding:1.2rem 1.5rem; }
+  .nav-links { display:none; }
+  .hero { padding:0 1.5rem 5rem; }
+  .hero-bottom { flex-direction:column; align-items:flex-start; }
+  .section { padding:6rem 1.5rem; }
+  .section-full { padding:6rem 1.5rem; }
+  .s-title { font-size:2rem; }
+  .stats-band { grid-template-columns:1fr 1fr; }
+  .stat-cell { padding:2rem 1.5rem; }
+  .cta-section { flex-direction:column; padding:6rem 1.5rem; }
+  .hiw-grid { grid-template-columns:1fr; }
+  .hiw-cell { border-right:none; border-bottom:1px solid var(--line); }
+  .hiw-cell:last-child { border-bottom:none; }
+  footer { flex-direction:column; padding:2rem 1.5rem; }
+  .app-screen { grid-template-columns:1fr; }
+  .app-sidebar { display:none; }
+  .media-grid { grid-template-columns:repeat(3,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo-wrap">
+    <img class="loader-logo" src="/logo_transparent.png" alt="WatchAny"/>
+  </div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-count" id="loader-count">0%</div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-left">
+    <img class="nav-logo" src="/logo_transparent.png" alt="WatchAny"/>
+    <span class="nav-brand">WatchAny</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#download">Download</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+  <a href="#download" class="nav-cta">Download Free →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Open source · Cross platform · Always free
+    </div>
+    <h1 class="hero-h1">
+      Watch<br><em>anything.</em><br>Always.
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        The media player that plays everything — local files, torrents, streams, URLs. 
+        Fast, native, and brutally simple.
+      </p>
+      <div class="hero-actions">
+        <a href="#download" class="btn-white">⬇ Download Now</a>
+        <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank" class="btn-ghost">★ GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee-track">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="stat-cell r">
+    <div class="stat-n" id="stat-ver">v2.0</div>
+    <div class="stat-l">Latest Version</div>
+  </div>
+  <div class="stat-cell r d1">
+    <div class="stat-n" id="stat-rel">—</div>
+    <div class="stat-l">Total Releases</div>
+  </div>
+  <div class="stat-cell r d2">
+    <div class="stat-n">5</div>
+    <div class="stat-l">Supported Architectures</div>
+  </div>
+  <div class="stat-cell r d3">
+    <div class="stat-n">100%</div>
+    <div class="stat-l">Free & Open Source</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section" id="features">
+  <div class="s-label r">Capabilities</div>
+  <h2 class="s-title r d1">Built different.<br><em>Built for everything.</em></h2>
+</div>
+
+<div style="max-width:1280px;margin:0 auto;padding:0 2.5rem 9rem;">
+  <div class="features-table">
+    <div class="feature-row">
+      <div class="feature-cell r">
+        <div class="feat-num">01</div>
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Instant Torrent Streaming</div>
+        <div class="feat-desc">Powered by TorrServer. Drop a magnet link and watch in seconds — no waiting for full downloads. Real-time streaming from the swarm.</div>
+      </div>
+      <div class="feature-cell r d1">
+        <div class="feat-num">02</div>
+        <div class="feat-icon">🎬</div>
+        <div class="feat-title">Universal Codec Support</div>
+        <div class="feat-desc">Built on media_kit with hardware-accelerated decoding. MKV, MP4, AVI, WebM, HEVC, H.264 — if it exists, WatchAny plays it. In 4K.</div>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="feature-cell r">
+        <div class="feat-num">03</div>
+        <div class="feat-icon">📡</div>
+        <div class="feat-title">Network & URL Streaming</div>
+        <div class="feat-desc">HTTP streams, IPTV sources, remote files — paste a URL and play. Zero configuration. Works with any online video resource.</div>
+      </div>
+      <div class="feature-cell r d1">
+        <div class="feat-num">04</div>
+        <div class="feat-icon">💬</div>
+        <div class="feat-title">Full Subtitle Support</div>
+        <div class="feat-desc">Embedded tracks, external files, multiple languages. SRT, ASS, SSA, VTT. Full timing control and style override.</div>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="feature-cell r">
+        <div class="feat-num">05</div>
+        <div class="feat-icon">💾</div>
+        <div class="feat-title">Local Library Playback</div>
+        <div class="feat-desc">Open any file from disk. Remembers your position. No indexing delays, no library lock-in. Just pick a file and go.</div>
+      </div>
+      <div class="feature-cell r d1">
+        <div class="feat-num">06</div>
+        <div class="feat-icon">🖥</div>
+        <div class="feat-title">Truly Cross-Platform</div>
+        <div class="feat-desc">One codebase, native performance. Windows installer, Android APK. Linux and macOS builds available from source with Flutter.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP PREVIEW -->
+<div class="app-preview-section">
+  <div class="s-label r" style="padding:0 0 2rem;">App Preview</div>
+  <div class="app-preview-wrap r">
+    <div class="app-topbar">
+      <div class="tb-dot tb-red"></div>
+      <div class="tb-dot tb-yellow"></div>
+      <div class="tb-dot tb-green"></div>
+      <div class="tb-title" id="app-preview-title">WatchAny 2.0</div>
+    </div>
+    <div class="app-screen">
+      <div class="app-sidebar">
+        <div class="app-sidebar-logo">
+          <img src="/logo_transparent.png" alt="WatchAny"/>
+        </div>
+        <div class="sidebar-item active" data-tab="home"><span class="sidebar-icon">🏠</span> Home</div>
+        <div class="sidebar-item" data-tab="library"><span class="sidebar-icon">📂</span> Library</div>
+        <div class="sidebar-item" data-tab="torrents"><span class="sidebar-icon">🔗</span> Torrents</div>
+        <div class="sidebar-item" data-tab="streams"><span class="sidebar-icon">📡</span> Streams</div>
+        <div class="sidebar-item" data-tab="favorites"><span class="sidebar-icon">⭐</span> Favorites</div>
+        <div class="sidebar-item" data-tab="settings"><span class="sidebar-icon">⚙</span> Settings</div>
+      </div>
+      
+      <!-- Interactive Main Container -->
+      <div class="app-main" id="app-preview-content">
+        <!-- Default: Home Tab -->
+        <div class="app-search">
+          <span>🔍</span>
+          <span>Search or paste a URL / magnet link...</span>
+        </div>
+        <div style="font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);">Continue Watching</div>
+        <div class="media-grid">
+          <div class="media-card" onclick="simulatePlay('Midnight Run (2024)', '4K · HDR · H.265 · TrueHD 7.1')">
+            <div class="mc-art">M</div>
+            <div class="media-card-overlay"></div>
+            <div class="media-card-info">
+              <div class="media-card-title">Midnight Run</div>
+              <div class="media-card-sub">4K · HDR</div>
+              <div class="progress-mini"><div class="progress-mini-fill" style="width:65%"></div></div>
+            </div>
+          </div>
+          <div class="media-card" onclick="simulatePlay('Eclipse S02E04', '1080p · AAC Dual Audio')">
+            <div class="mc-art">E</div>
+            <div class="media-card-overlay"></div>
+            <div class="media-card-info">
+              <div class="media-card-title">Eclipse S02E04</div>
+              <div class="media-card-sub">1080p</div>
+              <div class="progress-mini"><div class="progress-mini-fill" style="width:30%"></div></div>
+            </div>
+          </div>
+          <div class="media-card" onclick="simulatePlay('Infinite Loop', '4K · Dolby Vision · TrueHD')">
+            <div class="mc-art">∞</div>
+            <div class="media-card-overlay"></div>
+            <div class="media-card-info">
+              <div class="media-card-title">Infinite Loop</div>
+              <div class="media-card-sub">4K · DV</div>
+              <div class="progress-mini"><div class="progress-mini-fill" style="width:82%"></div></div>
+            </div>
+          </div>
+          <div class="media-card" onclick="simulatePlay('Apex S01E01', 'Live HLS Stream · 1080p')">
+            <div class="mc-art">▲</div>
+            <div class="media-card-overlay"></div>
+            <div class="media-card-info">
+              <div class="media-card-title">Apex S01E01</div>
+              <div class="media-card-sub">Streaming</div>
+              <div class="progress-mini"><div class="progress-mini-fill" style="width:12%"></div></div>
+            </div>
+          </div>
+          <div class="media-card" onclick="simulatePlay('Unknown.mkv', 'Local File · HEVC 10bit')">
+            <div class="mc-art">◈</div>
+            <div class="media-card-overlay"></div>
+            <div class="media-card-info">
+              <div class="media-card-title">Unknown.mkv</div>
+              <div class="media-card-sub">Local</div>
+              <div class="progress-mini"><div class="progress-mini-fill" style="width:50%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Player Bar -->
+    <div class="app-player-bar">
+      <div class="player-now">
+        <div class="player-thumb" id="player-mock-thumb">🎬</div>
+        <div class="player-info">
+          <div class="player-title" id="player-mock-title">Midnight Run (2024)</div>
+          <div class="player-sub" id="player-mock-sub">4K · HDR · H.265 · TrueHD 7.1</div>
+        </div>
+      </div>
+      <div class="player-controls">
+        <div class="pc-buttons">
+          <button class="pc-btn">⏮</button>
+          <button class="pc-btn">⏪</button>
+          <button class="pc-btn play" id="player-play-btn" onclick="togglePlayState()">▶</button>
+          <button class="pc-btn">⏩</button>
+          <button class="pc-btn">⏭</button>
+        </div>
+        <div class="pc-bar">
+          <div class="pc-fill animating" id="player-progress-bar"><div class="pc-dot"></div></div>
+        </div>
+      </div>
+      <div class="pc-time" id="player-mock-time">38:24 / 1:41:06</div>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNLOAD -->
+<div class="dl-section" id="download">
+  <div class="dl-inner">
+    <div class="s-label r">Download</div>
+    <h2 class="s-title r d1">Your device.<br><em>Your download.</em></h2>
+    <p style="margin-top:1rem;color:var(--muted2);font-size:.9rem;font-weight:300;max-width:440px;" class="r d2">Always fetched live from GitHub Releases. Every link is the latest version.</p>
+    <div class="dl-grid" id="dl-grid">
+      <div class="dl-col">
+        <div class="dl-loading"><div class="spin"></div> Fetching latest release…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section-full" id="how-it-works" style="max-width:none;padding:9rem 0;">
+  <div style="max-width:1280px;margin:0 auto;padding:0 2.5rem 4rem;">
+    <div class="s-label r">Process</div>
+    <h2 class="s-title r d1">Up and running<br><em>in under a minute.</em></h2>
+  </div>
+  <div class="hiw-grid" style="max-width:none;border-left:none;border-right:none;">
+    <div class="hiw-cell r">
+      <span class="hiw-num">01</span>
+      <div class="hiw-title">Download</div>
+      <div class="hiw-desc">Grab the build for your platform. Windows installer or standalone ZIP. Android APK for your architecture. No accounts, no sign-ups.</div>
+    </div>
+    <div class="hiw-cell r d1">
+      <span class="hiw-num">02</span>
+      <div class="hiw-title">Install</div>
+      <div class="hiw-desc">Run the setup wizard on Windows, or install the APK directly on Android. No dependencies, no runtimes. Self-contained binary.</div>
+    </div>
+    <div class="hiw-cell r d2">
+      <span class="hiw-num">03</span>
+      <div class="hiw-title">Add Content</div>
+      <div class="hiw-desc">Open a local file, paste a magnet link, drop in a stream URL. WatchAny handles torrent discovery, buffering, and decoding automatically.</div>
+    </div>
+    <div class="hiw-cell r d3">
+      <span class="hiw-num">04</span>
+      <div class="hiw-title">Watch</div>
+      <div class="hiw-desc">Full quality. Hardware-accelerated. Subtitles, multi-audio, seeking — all of it. This page always links to the latest release.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-left r">
+    <h2 class="cta-title">Ready to watch<br><em>anything?</em></h2>
+    <p class="cta-sub">Free. Open source. No ads. No accounts. Just press play.</p>
+  </div>
+  <div class="cta-right r d2">
+    <a href="#download" class="btn-white" style="font-size:1rem;padding:1rem 2.5rem;">Download Free →</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <img class="footer-logo" src="/logo_transparent.png" alt="WatchAny"/>
+    <span class="footer-brand">WatchAny 2.0</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0/releases" target="_blank">Releases</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0/issues" target="_blank">Report Bug</a></li>
+  </ul>
+  <div class="footer-right">© 2026 WatchAny — Open Source</div>
+</footer>
+
+<script>
+/* ─── CURSOR ─── */
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+});
+const updateCursorHover = () => {
+  document.querySelectorAll('a,button,.dl-item,.feature-row,.sidebar-item,.media-card,.mock-stream-row').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('grow'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('grow'));
+  });
+};
+updateCursorHover();
+
+/* ─── LOADER ─── */
+(function(){
+  const loader = document.getElementById('loader');
+  const count  = document.getElementById('loader-count');
+  let n = 0;
+  const iv = setInterval(() => {
+    n += Math.random() * 18 + 4;
+    if(n >= 100) { n = 100; clearInterval(iv); }
+    count.textContent = Math.round(n) + '%';
+    if(n >= 100) setTimeout(()=> loader.classList.add('done'), 300);
+  }, 60);
+})();
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ─── MARQUEE ─── */
+(function(){
+  const items = [
+    'Torrent Streaming','4K Playback','Subtitles','Local Library',
+    'URL Streaming','Windows','Android','Open Source',
+    'Hardware Acceleration','Multi-Audio','Flutter','Free Forever',
+    'No Ads','No Accounts','MKV · MP4 · AVI','HEVC · H.264',
+  ];
+  const track = document.getElementById('marquee-track');
+  const doubled = [...items, ...items, ...items];
+  track.innerHTML = doubled.map(t => `<span class="marquee-item">${t}</span>`).join('');
+})();
+
+/* ─── SCROLL REVEAL ─── */
+(function(){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('v'); io.unobserve(e.target); }});
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+})();
+
+/* ─── APP PREVIEW SIMULATOR TABS ─── */
+const appContent = document.getElementById('app-preview-content');
+const appTitle = document.getElementById('app-preview-title');
+
+const tabs = {
+  home: `
+    <div class="app-search">
+      <span>🔍</span>
+      <span>Search or paste a URL / magnet link...</span>
+    </div>
+    <div style="font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);">Continue Watching</div>
+    <div class="media-grid">
+      <div class="media-card" onclick="simulatePlay('Midnight Run (2024)', '4K · HDR · H.265 · TrueHD 7.1')">
+        <div class="mc-art">M</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Midnight Run</div>
+          <div class="media-card-sub">4K · HDR</div>
+          <div class="progress-mini"><div class="progress-mini-fill" style="width:65%"></div></div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Eclipse S02E04', '1080p · AAC Dual Audio')">
+        <div class="mc-art">E</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Eclipse S02E04</div>
+          <div class="media-card-sub">1080p</div>
+          <div class="progress-mini"><div class="progress-mini-fill" style="width:30%"></div></div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Infinite Loop', '4K · Dolby Vision · TrueHD')">
+        <div class="mc-art">∞</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Infinite Loop</div>
+          <div class="media-card-sub">4K · DV</div>
+          <div class="progress-mini"><div class="progress-mini-fill" style="width:82%"></div></div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Apex S01E01', 'Live HLS Stream · 1080p')">
+        <div class="mc-art">▲</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Apex S01E01</div>
+          <div class="media-card-sub">Streaming</div>
+          <div class="progress-mini"><div class="progress-mini-fill" style="width:12%"></div></div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Unknown.mkv', 'Local File · HEVC 10bit')">
+        <div class="mc-art">◈</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Unknown.mkv</div>
+          <div class="media-card-sub">Local</div>
+          <div class="progress-mini"><div class="progress-mini-fill" style="width:50%"></div></div>
+        </div>
+      </div>
+    </div>
+  `,
+  library: `
+    <div style="font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);">My Offline Library</div>
+    <div class="media-grid">
+      <div class="media-card" onclick="simulatePlay('Frieren Ep. 28', '1080p · Japanese · Eng Sub')">
+        <div class="mc-art">❄️</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Frieren: Beyond Journey's End</div>
+          <div class="media-card-sub">1080p · Ep. 28</div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Demon Slayer: Mugen Train', '4K · HDR · Jap/Eng Multi-Audio')">
+        <div class="mc-art">⚔️</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Demon Slayer: Mugen Train</div>
+          <div class="media-card-sub">4K · Movie</div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Oshi no Ko Ep. 11', '1080p · Japanese · Eng Sub')">
+        <div class="mc-art">🎭</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Oshi no Ko</div>
+          <div class="media-card-sub">1080p · Ep. 11</div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Chainsaw Man Complete', '4K · HEVC · Dual-Audio')">
+        <div class="mc-art">🪚</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Chainsaw Man</div>
+          <div class="media-card-sub">4K · Complete</div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Cyberpunk: Edgerunners', '1080p · Dual-Audio · Eng Sub')">
+        <div class="mc-art">🦾</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Cyberpunk: Edgerunners</div>
+          <div class="media-card-sub">1080p · Ep. 10</div>
+        </div>
+      </div>
+    </div>
+  `,
+  torrents: `
+    <div style="font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);">Active Torrents</div>
+    <div style="display:flex; flex-direction:column; gap:.75rem; margin-top:.5rem;">
+      <div class="mock-stream-row" style="border:1px solid var(--line); border-radius:4px; padding:.75rem; background:rgba(255,255,255,0.01); display:flex; justify-content:space-between; align-items:center; transition: background .2s; cursor: pointer;" onclick="simulatePlay('Steins;Gate Complete Batch', 'Seeds: 142 · Peers: 28 · DL: 12.4 MB/s')">
+        <div>
+          <div style="font-size:.72rem; font-weight:600;">Steins;Gate Complete Batch [1080p]</div>
+          <div style="font-family:var(--mono); font-size:.58rem; color:var(--muted); margin-top:.2rem;">Seeds: 142 · Peers: 28 · DL: 12.4 MB/s</div>
+        </div>
+        <div style="font-family:var(--mono); font-size:.65rem; color:#27c93f;">Streaming</div>
+      </div>
+      <div class="mock-stream-row" style="border:1px solid var(--line); border-radius:4px; padding:.75rem; background:rgba(255,255,255,0.01); display:flex; justify-content:space-between; align-items:center; transition: background .2s; cursor: pointer;" onclick="simulatePlay('Cyberpunk Edgerunners Pack', 'Seeds: 89 · Peers: 12 · Speed: 4.8 MB/s')">
+        <div>
+          <div style="font-size:.72rem; font-weight:600;">Cyberpunk Edgerunners S01 (Dual-Audio)</div>
+          <div style="font-family:var(--mono); font-size:.58rem; color:var(--muted); margin-top:.2rem;">Seeds: 89 · Peers: 12 · Speed: 4.8 MB/s</div>
+        </div>
+        <div style="font-family:var(--mono); font-size:.65rem; color:var(--muted);">Completed</div>
+      </div>
+    </div>
+  `,
+  streams: `
+    <div style="font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);">Live & IPTV Stream Player</div>
+    <div style="display:flex; flex-direction:column; gap:.75rem; margin-top:.5rem;">
+      <div class="mock-stream-row" style="border:1px solid var(--line); border-radius:4px; padding:.75rem; background:rgba(255,255,255,0.01); display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition: background .2s;" onclick="simulatePlay('NASA TV Live HD', 'Live Stream · HLS m3u8 source')">
+        <div>
+          <div style="font-size:.72rem; font-weight:600;">NASA TV Live HD</div>
+          <div style="font-family:var(--mono); font-size:.58rem; color:var(--muted); margin-top:.2rem;">m3u8 live link</div>
+        </div>
+        <span style="font-size:.8rem; color:var(--muted);">▶</span>
+      </div>
+      <div class="mock-stream-row" style="border:1px solid var(--line); border-radius:4px; padding:.75rem; background:rgba(255,255,255,0.01); display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition: background .2s;" onclick="simulatePlay('Anime Lo-Fi Girl Radio', 'Live Audio Stream · AAC 320kbps')">
+        <div>
+          <div style="font-size:.72rem; font-weight:600;">Lofi Girl Radio Stream</div>
+          <div style="font-family:var(--mono); font-size:.58rem; color:var(--muted); margin-top:.2rem;">HTTP Audio Stream</div>
+        </div>
+        <span style="font-size:.8rem; color:var(--muted);">▶</span>
+      </div>
+    </div>
+  `,
+  favorites: `
+    <div style="font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);">My Favorites</div>
+    <div class="media-grid">
+      <div class="media-card" onclick="simulatePlay('Steins;Gate (2011)', '1080p · Complete Series · Jap/Eng')">
+        <div class="mc-art">⏳</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Steins;Gate</div>
+          <div class="media-card-sub">1080p · Anime</div>
+        </div>
+      </div>
+      <div class="media-card" onclick="simulatePlay('Interstellar (2014)', '4K · HDR · DTS-HD Master Audio')">
+        <div class="mc-art">🛸</div>
+        <div class="media-card-overlay"></div>
+        <div class="media-card-info">
+          <div class="media-card-title">Interstellar</div>
+          <div class="media-card-sub">4K · Movie</div>
+        </div>
+      </div>
+    </div>
+  `,
+  settings: `
+    <div style="font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);">watchAny Preferences</div>
+    <div class="settings-list">
+      <div class="settings-group-title">Torrent Engine</div>
+      <div class="settings-row">
+        <span class="settings-label">TorrServer Local Address</span>
+        <span class="settings-val">http://127.0.0.1:8090</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Direct Peer Streaming Connection</span>
+        <span class="settings-val toggle-active">ON</span>
+      </div>
+
+      <div class="settings-group-title">Playback Engine</div>
+      <div class="settings-row">
+        <span class="settings-label">Hardware Acceleration (DirectX 12 / Vulkan)</span>
+        <span class="settings-val toggle-active">ON</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Subtitle Text Size</span>
+        <span class="settings-val">18px</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Extension Index Cache</span>
+        <span class="settings-val">Keiyoushi Extensions (3.2.1)</span>
+      </div>
+    </div>
+  `
+};
+
+document.querySelectorAll('.sidebar-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    
+    const tab = item.getAttribute('data-tab');
+    appContent.innerHTML = tabs[tab];
+    appTitle.textContent = `WatchAny 2.0 — ${item.textContent.replace(/[^\w\s]/g, '').trim()}`;
+    
+    updateCursorHover();
+  });
+});
+
+/* ─── SIMULATED PLAYER INTERACTS ─── */
+const playBtn = document.getElementById('player-play-btn');
+const progressBar = document.getElementById('player-progress-bar');
+const mockTitle = document.getElementById('player-mock-title');
+const mockSub = document.getElementById('player-mock-sub');
+const mockTime = document.getElementById('player-mock-time');
+
+let isPlaying = true;
+let progressPercent = 35;
+let progressInterval = null;
+
+function updateProgress() {
+  if (isPlaying) {
+    progressPercent += 0.1;
+    if (progressPercent >= 100) progressPercent = 0;
+    progressBar.style.width = `${progressPercent}%`;
+    
+    // Simulate updating time
+    const totalSec = 6066; // 1:41:06
+    const currentSec = Math.round(totalSec * (progressPercent / 100));
+    
+    const formatTime = s => {
+      const hrs = Math.floor(s / 3600);
+      const mins = Math.floor((s % 3600) / 60);
+      const secs = s % 60;
+      return `${hrs > 0 ? hrs + ':' : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+    
+    mockTime.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
+  }
+}
+
+// Start live ticker
+progressInterval = setInterval(updateProgress, 100);
+
+function togglePlayState() {
+  isPlaying = !isPlaying;
+  if (isPlaying) {
+    playBtn.textContent = '⏸';
+    progressBar.classList.add('animating');
+  } else {
+    playBtn.textContent = '▶';
+    progressBar.classList.remove('animating');
+  }
+}
+// Set initial button text to pause because it starts playing
+playBtn.textContent = '⏸';
+
+function simulatePlay(title, subtitle) {
+  mockTitle.textContent = title;
+  mockSub.textContent = subtitle;
+  progressPercent = 0;
+  isPlaying = true;
+  playBtn.textContent = '⏸';
+  progressBar.classList.add('animating');
+}
+
+/* ─── GITHUB RELEASES ─── */
+async function loadReleases(){
+  const grid = document.getElementById('dl-grid');
+  try {
+    const res = await fetch('https://api.github.com/repos/Fluffy-The-Penguin/watchAny-2.0/releases/latest');
+    if(!res.ok) throw new Error();
+    const d = await res.json();
+    const tag = d.tag_name;
+
+    document.getElementById('stat-ver').textContent = tag;
+
+    const fmt = b => (b/1024/1024).toFixed(1)+' MB';
+
+    const win_exe  = d.assets.filter(a => a.name.endsWith('.exe'));
+    const win_zip  = d.assets.filter(a => a.name.endsWith('.zip'));
+    const arm64    = d.assets.filter(a => a.name.includes('arm64'));
+    const armv7    = d.assets.filter(a => a.name.includes('armeabi-v7a'));
+    const x86      = d.assets.filter(a => a.name.includes('x86_64'));
+
+    const items = (list, labels) => list.map((a,i) => `
+      <a class="dl-item" href="${a.browser_download_url}">
+        <div class="dl-item-left">
+          <div class="dl-item-name">${labels[i] || a.name}</div>
+          <div class="dl-item-meta">${fmt(a.size)} · ${a.download_count} downloads</div>
+        </div>
+        <span class="dl-item-arrow">↓</span>
+      </a>`).join('');
+
+    grid.innerHTML = `
+      <div class="dl-col r">
+        <div class="dl-col-icon">🪟</div>
+        <div class="dl-col-name">Windows</div>
+        <div class="dl-col-sub">Runs on Windows 10 & 11. Full installer or portable standalone ZIP.</div>
+        <div class="dl-version">Release ${tag}</div>
+        <div class="dl-items">
+          ${items(win_exe, ['Installer (.exe)'])}
+          ${items(win_zip, ['Standalone (.zip)'])}
+        </div>
+      </div>
+      <div class="dl-col r d1">
+        <div class="dl-col-icon">🤖</div>
+        <div class="dl-col-name">Android</div>
+        <div class="dl-col-sub">Native APKs. Pick arm64 if you're not sure — it covers most modern phones.</div>
+        <div class="dl-version">Release ${tag}</div>
+        <div class="dl-items">
+          ${items(arm64, ['ARM64 — Recommended'])}
+          ${items(armv7, ['ARMv7 — Older devices'])}
+          ${items(x86,   ['x86_64 — Emulator / Intel'])}
+        </div>
+      </div>
+      <div class="dl-col r d2">
+        <div class="dl-col-icon">🐧</div>
+        <div class="dl-col-name">Linux / macOS</div>
+        <div class="dl-col-sub">Build from source using Flutter. Full instructions on GitHub.</div>
+        <div class="dl-version">Release ${tag}</div>
+        <div class="dl-items">
+          <a class="dl-item" href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">
+            <div class="dl-item-left">
+              <div class="dl-item-name">Source Code</div>
+              <div class="dl-item-meta">Flutter · Dart · Build from source</div>
+            </div>
+            <span class="dl-item-arrow">→</span>
+          </a>
+        </div>
+      </div>`;
+
+    updateCursorHover();
+
+    // re-observe
+    const io = new IntersectionObserver(en => { en.forEach(e => { if(e.isIntersecting){e.target.classList.add('v');io.unobserve(e.target);}}); },{threshold:.08});
+    grid.querySelectorAll('.r').forEach(el=>io.observe(el));
+  } catch(_){
+    grid.innerHTML = `<div class="dl-col" style="grid-column:1/-1;text-align:center;padding:3rem;">
+      <p style="color:var(--muted);margin-bottom:1.5rem;font-size:.85rem;">Couldn't reach GitHub. View releases directly:</p>
+      <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0/releases/latest" target="_blank" class="btn-white">View Latest Release →</a>
+    </div>`;
+  }
+}
+loadReleases();
+
+/* ─── RELEASE COUNT ─── */
+(async()=>{
+  try {
+    const r = await fetch('https://api.github.com/repos/Fluffy-The-Penguin/watchAny-2.0/releases?per_page=100');
+    if(r.ok){ const a=await r.json(); if(Array.isArray(a)) document.getElementById('stat-rel').textContent=a.length; }
+  }catch(_){}
+})();
+</script>
+</body>
 </html>
