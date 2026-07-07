@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>watchAny Interface Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #050505;
+  --bg2: #0a0a0a;
+  --bg3: #0f0f0f;
+  --line: rgba(255,255,255,0.06);
+  --line2: rgba(255,255,255,0.1);
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.38);
+  --muted2: rgba(255,255,255,0.55);
+  --mono: 'JetBrains Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed; top:0; left:0; z-index:9999;
+  width:10px; height:10px;
+  background:#fff;
+  border-radius:50%;
+  pointer-events:none;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s;
+  mix-blend-mode: difference;
+}
+#cursor.grow { width:40px; height:40px; }
+
+/* ── LOADER ── */
+#loader {
+  position:fixed; inset:0; z-index:9000;
+  background:#050505;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:1.5rem;
+}
+.loader-logo-wrap {
+  position: relative;
+  width: 80px; height: 80px;
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+.loader-logo {
+  width:64px; height:64px;
+  opacity:0;
+  animation: logo-in .6s .2s ease forwards;
+}
+.loader-logo-wrap::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 200%; height: 200%;
+  background: linear-gradient(
+    45deg,
+    rgba(255,255,255,0) 30%,
+    rgba(0,0,0,0.85) 50%,
+    rgba(255,255,255,0) 70%
+  );
+  transform: rotate(30deg);
+  animation: slash-sweep 2.2s infinite ease-in-out;
+}
+@keyframes slash-sweep {
+  0% { transform: translate(-35%, -35%) rotate(30deg); }
+  100% { transform: translate(35%, 35%) rotate(30deg); }
+}
+@keyframes logo-in { to { opacity:1; } }
+.loader-count {
+  font-family: var(--mono);
+  font-size:.8rem;
+  color: var(--muted);
+  letter-spacing:.15em;
+}
+.loader-bar {
+  width:160px; height:1px;
+  background: var(--line2);
+  position:relative; overflow:hidden;
+}
+.loader-fill {
+  position:absolute; inset:0;
+  background:#fff;
+  transform:scaleX(0);
+  transform-origin:left;
+  animation: fill-bar 1.6s cubic-bezier(.4,0,.2,1) .3s forwards;
+}
+@keyframes fill-bar { to { transform:scaleX(1); } }
+#loader.done {
+  opacity:0; pointer-events:none;
+  transition: opacity .5s ease;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:800;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.5rem 2.5rem;
+  transition: background .4s;
+}
+nav.scrolled {
+  background: rgba(5,5,5,.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-left { display:flex; align-items:center; gap:.75rem; }
+.nav-logo { width:28px; }
+.nav-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size:.85rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:#fff;
+  text-decoration: none;
+}
+.nav-links {
+  display:flex; gap:2rem; list-style:none;
+}
+.nav-links a {
+  font-size:.78rem; font-weight:500;
+  color: var(--muted2); text-decoration:none;
+  letter-spacing:.04em;
+  transition: color .2s;
+}
+.nav-links a:hover { color:#fff; }
+.nav-links a.active { color:#fff; font-weight:600; }
+.nav-cta {
+  font-size:.78rem; font-weight:600;
+  color:#000; background:#fff;
+  border:none; border-radius:4px;
+  padding:.5rem 1.2rem;
+  cursor:pointer; text-decoration:none;
+  letter-spacing:.03em;
+  transition: opacity .2s;
+}
+.nav-cta:hover { opacity:.85; }
+
+/* ── HERO ── */
+.hero {
+  min-height:50vh;
+  display:flex; flex-direction:column;
+  justify-content:center;
+  padding:8rem 2.5rem 4rem;
+  position:relative; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0; z-index:0;
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(255,255,255,.03) 0%, transparent 70%);
+}
+.hero-glow {
+  position: absolute;
+  top: 45%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(129, 140, 248, 0.02) 50%, transparent 100%);
+  filter: blur(80px);
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-grid {
+  position:absolute; inset:0; z-index:0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 30%, transparent 100%);
+  opacity:.6;
+}
+.hero-content { position:relative; z-index:2; }
+.hero-h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight:800;
+  letter-spacing:-.04em;
+  line-height:.95;
+  margin-bottom:1.5rem;
+}
+.hero-h1 em {
+  font-style:normal;
+  color: var(--muted);
+}
+.hero-desc {
+  max-width:500px;
+  font-size:1.1rem; line-height:1.7;
+  color: var(--muted2);
+  font-weight:300;
+}
+
+/* ── GALLERY GRID ── */
+.gallery-section {
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  padding: 6rem 2.5rem 9rem;
+}
+.gallery-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.gallery-card {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg2);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform .3s, border-color .3s;
+}
+.gallery-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--line2);
+}
+.gallery-img-wrap {
+  width: 100%;
+  aspect-ratio: 16/10;
+  background: var(--bg3);
+  overflow: hidden;
+}
+.gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s ease;
+}
+.gallery-card:hover .gallery-img {
+  transform: scale(1.05);
+}
+.gallery-info {
+  padding: 1.5rem;
+}
+.gallery-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: .4rem;
+}
+.gallery-desc {
+  font-size: .82rem;
+  color: var(--muted2);
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+/* ── LIGHTBOX OVERLAY ── */
+#lightbox {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(5,5,5,.95);
+  backdrop-filter: blur(10px);
+  display: none; align-items: center; justify-content: center;
+  padding: 2rem;
+}
+#lightbox.active { display: flex; }
+.lightbox-wrap {
+  max-width: 1000px; width: 100%;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.lightbox-img-container {
+  width: 100%; border: 1px solid var(--line);
+  border-radius: 6px; overflow: hidden; background: #000;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+}
+#lightbox-img {
+  width: 100%; height: auto; display: block;
+}
+.lightbox-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem; font-weight: 800;
+}
+.lightbox-desc {
+  font-size: .95rem; color: var(--muted2);
+  line-height: 1.6; font-weight: 300;
+}
+.lightbox-close {
+  position: absolute; top: 2rem; right: 2.5rem;
+  background: none; border: none; color: #fff;
+  font-size: 2.5rem; cursor: pointer; opacity: .6;
+  transition: opacity .2s;
+}
+.lightbox-close:hover { opacity: 1; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--line);
+  padding:3rem 2.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:1.5rem;
+}
+.footer-left {
+  display:flex; align-items:center; gap:.75rem;
+}
+.footer-logo { width:22px; opacity:.6; }
+.footer-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size:.75rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted);
+}
+.footer-links {
+  display:flex; gap:2rem; list-style:none;
+}
+.footer-links a {
+  font-size:.75rem; color:var(--muted);
+  text-decoration:none; transition:color .2s;
+}
+.footer-links a:hover { color:#fff; }
+.footer-right {
+  font-family:var(--mono);
+  font-size:.65rem; color:var(--muted);
+  letter-spacing:.08em;
+}
+
+/* ── MOBILE NAV TOGGLE ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  width: 32px; height: 32px;
+}
+.nav-toggle span {
+  width: 20px;
+  height: 2px;
+  background: #fff;
+  transition: transform .3s, opacity .3s;
+}
+.nav-toggle.open .line-1 {
+  transform: translateY(4px) rotate(45deg);
+}
+.nav-toggle.open .line-2 {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+/* ── MOBILE MENU OVERLAY ── */
+.mobile-menu {
+  position: fixed; inset: 0;
+  background: rgba(5, 5, 5, 0.98);
+  backdrop-filter: blur(20px);
+  z-index: 750;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s ease;
+}
+.mobile-menu.active {
+  opacity: 1; pointer-events: all;
+}
+.mobile-links {
+  list-style: none;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2.5rem;
+}
+.mobile-links a {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem; font-weight: 800;
+  color: var(--muted); text-decoration: none;
+  letter-spacing: -.02em;
+  transition: color .2s, transform .2s;
+}
+.mobile-links a:hover {
+  color: #fff;
+}
+
+/* ── REVEAL ANIMATIONS ── */
+.r {
+  opacity:0; transform:translateY(32px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.r.v { opacity:1; transform:none; }
+.r.d1 { transition-delay:.05s; }
+.r.d2 { transition-delay:.1s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:1024px) {
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width:768px) {
+  nav { padding:1.2rem 1.5rem; }
+  .nav-links { display:none; }
+  .nav-cta { display:none; }
+  .nav-toggle { display:flex; }
+  .hero { padding:8rem 1.5rem 4rem; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .gallery-section { padding:4rem 1.5rem 6rem; }
+  footer { flex-direction:column; padding:2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo-wrap">
+    <img class="loader-logo" src="/logo_transparent.png" alt="WatchAny"/>
+  </div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-count" id="loader-count">0%</div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-left" href="/index.html">
+    <img class="nav-logo" src="/logo_transparent.png" alt="WatchAny"/>
+    <span class="nav-brand">WatchAny</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/index.html#features">Features</a></li>
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html" class="active">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+  <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank" class="nav-cta">Star on GitHub ★</a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle Menu">
+    <span class="line-1"></span>
+    <span class="line-2"></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-links">
+    <li><a href="/index.html#features">Features</a></li>
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <h1 class="hero-h1 r">
+      Interface <em>gallery</em>.
+    </h1>
+    <p class="hero-desc r d1">
+      A visual showcase of the watchAny 2.0 interface across desktop and mobile screens.
+    </p>
+  </div>
+</section>
+
+<!-- GALLERY SECTION -->
+<section class="gallery-section">
+  <div class="gallery-grid">
+    <div class="gallery-card r" onclick="openLightbox('/gallery/home_screen.png', 'Desktop Dashboard', 'The clean watchAny home screen indexing your continue watching items, favorites, and quick search tools.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="/gallery/home_screen.png" alt="Desktop Dashboard"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Desktop Dashboard</h3>
+        <p class="gallery-desc">The initial setup dashboard tracking your progress and library links.</p>
+      </div>
+    </div>
+    
+    <div class="gallery-card r d1" onclick="openLightbox('/gallery/player_screen.png', 'Media Player', 'Hardware-accelerated media player supporting subtitles, chapters, streams, and Torrent swarm connections.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="/gallery/player_screen.png" alt="Media Player"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Advanced Media Player</h3>
+        <p class="gallery-desc">Custom player layout optimized for 4K streams and local video playback.</p>
+      </div>
+    </div>
+
+    <div class="gallery-card r d2" onclick="openLightbox('/gallery/anime_details.png', 'Anime Details Hub', 'AniList integration showing episode cataloging, rating data, genres, and torrent providers.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="/gallery/anime_details.png" alt="Anime Details Hub"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Anime Details Hub</h3>
+        <p class="gallery-desc">Comprehensive AniList integration displaying details, scores, and tracks.</p>
+      </div>
+    </div>
+
+    <div class="gallery-card r" onclick="openLightbox('/gallery/manga_details.png', 'Manga Reader Hub', 'Chapter indexes, bookmarks, cover artwork, and continue reading panels styled matching anime details.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="/gallery/manga_details.png" alt="Manga Reader Hub"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Manga Reader Hub</h3>
+        <p class="gallery-desc">Dynamic chapter browser with unified cover artwork layout.</p>
+      </div>
+    </div>
+
+    <div class="gallery-card r d1" onclick="openLightbox('/gallery/setup_wizard.png', 'Setup Wizard', 'The setup screen helping you configure local TorrServer instances and subtitle properties.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="/gallery/setup_wizard.png" alt="Setup Wizard"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Unified Setup Wizard</h3>
+        <p class="gallery-desc">Clean step-by-step instructions to configure local ports and services.</p>
+      </div>
+    </div>
+
+    <div class="gallery-card r d2" onclick="openLightbox('/gallery/downloads_page.png', 'Releases Index', 'Self-contained download index tracking current Windows and Android releases.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="/gallery/downloads_page.png" alt="Releases Index"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Releases Index</h3>
+        <p class="gallery-desc">Clean build selector with direct link references to APK and setup binaries.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX OVERLAY -->
+<div id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <div class="lightbox-wrap">
+    <div class="lightbox-img-container">
+      <img id="lightbox-img" src="" alt=""/>
+    </div>
+    <h2 class="lightbox-title" id="lightbox-title"></h2>
+    <p class="lightbox-desc" id="lightbox-desc"></p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <img class="footer-logo" src="/logo_transparent.png" alt="WatchAny"/>
+    <span class="footer-brand">WatchAny 2.0</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+  <div class="footer-right">© 2026 WatchAny — Open Source</div>
+</footer>
+
+<script>
+/* ─── CURSOR ─── */
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+});
+const updateCursorHover = () => {
+  document.querySelectorAll('a,button,.gallery-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('grow'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('grow'));
+  });
+};
+updateCursorHover();
+
+/* ─── LOADER ─── */
+(function(){
+  const loader = document.getElementById('loader');
+  const count  = document.getElementById('loader-count');
+  let n = 0;
+  const iv = setInterval(() => {
+    n += Math.random() * 18 + 4;
+    if(n >= 100) { n = 100; clearInterval(iv); }
+    count.textContent = Math.round(n) + '%';
+    if(n >= 100) setTimeout(()=> loader.classList.add('done'), 300);
+  }, 60);
+})();
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ─── MOBILE NAV MENU ─── */
+const navToggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if (navToggle && mobileMenu) {
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('open');
+    mobileMenu.classList.toggle('active');
+    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+  });
+
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navToggle.classList.remove('open');
+      mobileMenu.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+}
+
+/* ─── LIGHTBOX CONTROLS ─── */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxTitle = document.getElementById('lightbox-title');
+const lightboxDesc = document.getElementById('lightbox-desc');
+
+function openLightbox(src, title, desc) {
+  lightboxImg.src = src;
+  lightboxTitle.textContent = title;
+  lightboxDesc.textContent = desc;
+  lightbox.classList.add('active');
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+}
+
+// Close on clicking outside lightbox container
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+/* ─── SCROLL REVEAL ─── */
+(function(){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('v'); io.unobserve(e.target); }});
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

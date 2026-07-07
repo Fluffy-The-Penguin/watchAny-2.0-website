@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Frequently Asked Questions — WatchAny</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #050505;
+  --bg2: #0a0a0a;
+  --bg3: #0f0f0f;
+  --line: rgba(255,255,255,0.06);
+  --line2: rgba(255,255,255,0.1);
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.38);
+  --muted2: rgba(255,255,255,0.55);
+  --mono: 'JetBrains Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed; top:0; left:0; z-index:9999;
+  width:10px; height:10px;
+  background:#fff;
+  border-radius:50%;
+  pointer-events:none;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s;
+  mix-blend-mode: difference;
+}
+#cursor.grow { width:40px; height:40px; }
+
+/* ── LOADER ── */
+#loader {
+  position:fixed; inset:0; z-index:9000;
+  background:#050505;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:1.5rem;
+}
+.loader-logo-wrap {
+  position: relative;
+  width: 80px; height: 80px;
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+.loader-logo {
+  width:64px; height:64px;
+  opacity:0;
+  animation: logo-in .6s .2s ease forwards;
+}
+.loader-logo-wrap::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -60%;
+  width: 200%; height: 200%;
+  background: linear-gradient(
+    45deg,
+    rgba(255,255,255,0) 30%,
+    rgba(0,0,0,0.85) 50%,
+    rgba(255,255,255,0) 70%
+  );
+  transform: rotate(30deg);
+  animation: slash-sweep 2.2s infinite ease-in-out;
+}
+@keyframes slash-sweep {
+  0% { transform: translate(-35%, -35%) rotate(30deg); }
+  100% { transform: translate(35%, 35%) rotate(30deg); }
+}
+@keyframes logo-in { to { opacity:1; } }
+.loader-count {
+  font-family: var(--mono);
+  font-size:.8rem;
+  color: var(--muted);
+  letter-spacing:.15em;
+}
+.loader-bar {
+  width:160px; height:1px;
+  background: var(--line2);
+  position:relative; overflow:hidden;
+}
+.loader-fill {
+  position:absolute; inset:0;
+  background:#fff;
+  transform:scaleX(0);
+  transform-origin:left;
+  animation: fill-bar 1.6s cubic-bezier(.4,0,.2,1) .3s forwards;
+}
+@keyframes fill-bar { to { transform:scaleX(1); } }
+#loader.done {
+  opacity:0; pointer-events:none;
+  transition: opacity .5s ease;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:800;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.5rem 2.5rem;
+  transition: background .4s;
+}
+nav.scrolled {
+  background: rgba(5,5,5,.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-left { display:flex; align-items:center; gap:.75rem; }
+.nav-logo { width:28px; }
+.nav-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size:.85rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:#fff;
+  text-decoration: none;
+}
+.nav-links {
+  display:flex; gap:2rem; list-style:none;
+}
+.nav-links a {
+  font-size:.78rem; font-weight:500;
+  color: var(--muted2); text-decoration:none;
+  letter-spacing:.04em;
+  transition: color .2s;
+}
+.nav-links a:hover { color:#fff; }
+.nav-links a.active { color:#fff; font-weight:600; }
+.nav-cta {
+  font-size:.78rem; font-weight:600;
+  color:#000; background:#fff;
+  border:none; border-radius:4px;
+  padding:.5rem 1.2rem;
+  cursor:pointer; text-decoration:none;
+  letter-spacing:.03em;
+  transition: opacity .2s;
+}
+.nav-cta:hover { opacity:.85; }
+
+/* ── HERO ── */
+.hero {
+  min-height:50vh;
+  display:flex; flex-direction:column;
+  justify-content:center;
+  padding:8rem 2.5rem 4rem;
+  position:relative; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0; z-index:0;
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(255,255,255,.03) 0%, transparent 70%);
+}
+.hero-glow {
+  position: absolute;
+  top: 45%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(129, 140, 248, 0.02) 50%, transparent 100%);
+  filter: blur(80px);
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-grid {
+  position:absolute; inset:0; z-index:0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 30%, transparent 100%);
+  opacity:.6;
+}
+.hero-content { position:relative; z-index:2; }
+.hero-h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight:800;
+  letter-spacing:-.04em;
+  line-height:.95;
+  margin-bottom:1.5rem;
+}
+.hero-h1 em {
+  font-style:normal;
+  color: var(--muted);
+}
+.hero-desc {
+  max-width:500px;
+  font-size:1.1rem; line-height:1.7;
+  color: var(--muted2);
+  font-weight:300;
+}
+
+/* ── FAQ ACCORDION ── */
+.faq-section {
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  padding: 6rem 2.5rem 9rem;
+}
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.faq-item {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg2);
+  overflow: hidden;
+  transition: border-color .3s;
+}
+.faq-item:hover {
+  border-color: var(--line2);
+}
+.faq-question {
+  padding: 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-family: 'Outfit', sans-serif;
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1.5rem;
+  font-size: .95rem;
+  line-height: 1.7;
+  color: var(--muted2);
+  font-weight: 300;
+  transition: max-height .3s cubic-bezier(0, 1, 0, 1), padding .3s;
+}
+.faq-item.active .faq-answer {
+  max-height: 500px;
+  padding: 0 1.5rem 1.5rem;
+  transition: max-height .3s cubic-bezier(1, 0, 1, 0), padding .3s;
+}
+.faq-icon {
+  font-size: .8rem;
+  color: var(--muted);
+  transition: transform .3s;
+}
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--line);
+  padding:3rem 2.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:1.5rem;
+}
+.footer-left {
+  display:flex; align-items:center; gap:.75rem;
+}
+.footer-logo { width:22px; opacity:.6; }
+.footer-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size:.75rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted);
+}
+.footer-links {
+  display:flex; gap:2rem; list-style:none;
+}
+.footer-links a {
+  font-size:.75rem; color:var(--muted);
+  text-decoration:none; transition:color .2s;
+}
+.footer-links a:hover { color:#fff; }
+.footer-right {
+  font-family:var(--mono);
+  font-size:.65rem; color:var(--muted);
+  letter-spacing:.08em;
+}
+
+/* ── MOBILE NAV TOGGLE ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  width: 32px; height: 32px;
+}
+.nav-toggle span {
+  width: 20px;
+  height: 2px;
+  background: #fff;
+  transition: transform .3s, opacity .3s;
+}
+.nav-toggle.open .line-1 {
+  transform: translateY(4px) rotate(45deg);
+}
+.nav-toggle.open .line-2 {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+/* ── MOBILE MENU OVERLAY ── */
+.mobile-menu {
+  position: fixed; inset: 0;
+  background: rgba(5, 5, 5, 0.98);
+  backdrop-filter: blur(20px);
+  z-index: 750;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s ease;
+}
+.mobile-menu.active {
+  opacity: 1; pointer-events: all;
+}
+.mobile-links {
+  list-style: none;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2.5rem;
+}
+.mobile-links a {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem; font-weight: 800;
+  color: var(--muted); text-decoration: none;
+  letter-spacing: -.02em;
+  transition: color .2s, transform .2s;
+}
+.mobile-links a:hover {
+  color: #fff;
+}
+
+/* ── REVEAL ANIMATIONS ── */
+.r {
+  opacity:0; transform:translateY(32px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.r.v { opacity:1; transform:none; }
+.r.d1 { transition-delay:.05s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:768px) {
+  nav { padding:1.2rem 1.5rem; }
+  .nav-links { display:none; }
+  .nav-cta { display:none; }
+  .nav-toggle { display:flex; }
+  .hero { padding:8rem 1.5rem 4rem; }
+  .faq-section { padding:4rem 1.5rem 6rem; }
+  footer { flex-direction:column; padding:2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo-wrap">
+    <img class="loader-logo" src="/logo_transparent.png" alt="WatchAny"/>
+  </div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-count" id="loader-count">0%</div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-left" href="/index.html">
+    <img class="nav-logo" src="/logo_transparent.png" alt="WatchAny"/>
+    <span class="nav-brand">WatchAny</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/index.html#features">Features</a></li>
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html" class="active">FAQ</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+  <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank" class="nav-cta">Star on GitHub ★</a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle Menu">
+    <span class="line-1"></span>
+    <span class="line-2"></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-links">
+    <li><a href="/index.html#features">Features</a></li>
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <h1 class="hero-h1 r">
+      Frequently Asked<br><em>questions</em>.
+    </h1>
+    <p class="hero-desc r d1">
+      Got questions about TorrServer, formats, or downloading? We've got answers.
+    </p>
+  </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section class="faq-section">
+  <div class="faq-container">
+    <div class="faq-item r">
+      <div class="faq-question">
+        Is WatchAny really free?
+        <span class="faq-icon">＋</span>
+      </div>
+      <div class="faq-answer">
+        Yes, 100%. WatchAny is fully open-source under the MIT license, has no ads, no telemetry, no tracking, and does not require you to create an account. You can examine and compile all code directly from our GitHub repository.
+      </div>
+    </div>
+    
+    <div class="faq-item r d1">
+      <div class="faq-question">
+        How does torrent streaming work?
+        <span class="faq-icon">＋</span>
+      </div>
+      <div class="faq-answer">
+        WatchAny integrates TorrServer internally on desktop platforms. When you paste a torrent magnet link, the server begins downloading the movie chunks in sequential order rather than randomly. This lets the player buffer and start playing the video within seconds without waiting for the full file to download first.
+      </div>
+    </div>
+
+    <div class="faq-item r">
+      <div class="faq-question">
+        Does WatchAny support subtitles?
+        <span class="faq-icon">＋</span>
+      </div>
+      <div class="faq-answer">
+        Yes, WatchAny has robust subtitle rendering powered by media_kit. It supports internal subtitle tracks (inside MKV files) and external subtitle files (SRT, ASS, VTT, etc.). It fully displays formatted stylized subtitles (such as Anime karaoke effects) and allows you to adjust subtitle delay offset manually.
+      </div>
+    </div>
+
+    <div class="faq-item r d1">
+      <div class="faq-question">
+        Is there an iOS or macOS version?
+        <span class="faq-icon">＋</span>
+      </div>
+      <div class="faq-answer">
+        Currently, we compile official binaries for Windows (`.exe` installer / standalone) and Android (`.apk` package). iOS is not supported due to Apple App Store restrictions on peer-to-peer torrent engines. macOS and Linux builds can be compiled directly from source using the Flutter SDK.
+      </div>
+    </div>
+
+    <div class="faq-item r">
+      <div class="faq-question">
+        What is the Keiyoushi index?
+        <span class="faq-icon">＋</span>
+      </div>
+      <div class="faq-answer">
+        WatchAny supports searching third-party providers using extensions. Keiyoushi is a public index registry of extensions that scrape video stream sites and catalog media feeds. This lets you access manga, anime, and general content repositories dynamically within the app interface.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <img class="footer-logo" src="/logo_transparent.png" alt="WatchAny"/>
+    <span class="footer-brand">WatchAny 2.0</span>
+  </div>
+  <ul class="footer-links">
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+  <div class="footer-right">© 2026 WatchAny — Open Source</div>
+</footer>
+
+<script>
+/* ─── CURSOR ─── */
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a,button,.faq-question').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('grow'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('grow'));
+});
+
+/* ─── LOADER ─── */
+(function(){
+  const loader = document.getElementById('loader');
+  const count  = document.getElementById('loader-count');
+  let n = 0;
+  const iv = setInterval(() => {
+    n += Math.random() * 18 + 4;
+    if(n >= 100) { n = 100; clearInterval(iv); }
+    count.textContent = Math.round(n) + '%';
+    if(n >= 100) setTimeout(()=> loader.classList.add('done'), 300);
+  }, 60);
+})();
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ─── MOBILE NAV MENU ─── */
+const navToggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if (navToggle && mobileMenu) {
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('open');
+    mobileMenu.classList.toggle('active');
+    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+  });
+
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navToggle.classList.remove('open');
+      mobileMenu.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+}
+
+/* ─── ACCORDION TOGGLE ─── */
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('click', () => {
+    const parent = q.parentElement;
+    const isActive = parent.classList.contains('active');
+    
+    document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+    if (!isActive) {
+      parent.classList.add('active');
+    }
+  });
+});
+
+/* ─── SCROLL REVEAL ─── */
+(function(){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('v'); io.unobserve(e.target); }});
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

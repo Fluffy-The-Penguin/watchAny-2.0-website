@@ -709,6 +709,61 @@ footer {
 .r.d3 { transition-delay:.15s; }
 .r.d4 { transition-delay:.2s; }
 
+/* ── MOBILE NAV TOGGLE ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  width: 32px; height: 32px;
+}
+.nav-toggle span {
+  width: 20px;
+  height: 2px;
+  background: #fff;
+  transition: transform .3s, opacity .3s;
+}
+.nav-toggle.open .line-1 {
+  transform: translateY(4px) rotate(45deg);
+}
+.nav-toggle.open .line-2 {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+/* ── MOBILE MENU OVERLAY ── */
+.mobile-menu {
+  position: fixed; inset: 0;
+  background: rgba(5, 5, 5, 0.98);
+  backdrop-filter: blur(20px);
+  z-index: 750;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s ease;
+}
+.mobile-menu.active {
+  opacity: 1; pointer-events: all;
+}
+.mobile-links {
+  list-style: none;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 2.5rem;
+}
+.mobile-links a {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem; font-weight: 800;
+  color: var(--muted); text-decoration: none;
+  letter-spacing: -.02em;
+  transition: color .2s, transform .2s;
+}
+.mobile-links a:hover {
+  color: #fff;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width:1024px) {
   .stats-band { grid-template-columns:1fr 1fr; }
@@ -725,7 +780,9 @@ footer {
 @media (max-width:768px) {
   nav { padding:1.2rem 1.5rem; }
   .nav-links { display:none; }
-  .hero { padding:0 1.5rem 5rem; }
+  .nav-cta { display:none; }
+  .nav-toggle { display:flex; }
+  .hero { padding:8rem 1.5rem 4rem; }
   .hero-bottom { flex-direction:column; align-items:flex-start; }
   .section { padding:6rem 1.5rem; }
   .section-full { padding:6rem 1.5rem; }
@@ -759,18 +816,34 @@ footer {
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="nav-left">
+  <a class="nav-left" href="/index.html" style="text-decoration: none;">
     <img class="nav-logo" src="/logo_transparent.png" alt="WatchAny"/>
     <span class="nav-brand">WatchAny</span>
-  </div>
+  </a>
   <ul class="nav-links">
-    <li><a href="#features">Features</a></li>
-    <li><a href="#download">Download</a></li>
-    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="/index.html#features">Features</a></li>
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
     <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
   </ul>
-  <a href="#download" class="nav-cta">Download Free →</a>
+  <a href="/download.html" class="nav-cta">Download Free →</a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle Menu">
+    <span class="line-1"></span>
+    <span class="line-2"></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-links">
+    <li><a href="/index.html#features">Features</a></li>
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
+    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
+  </ul>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -791,7 +864,7 @@ footer {
         Fast, native, and brutally simple.
       </p>
       <div class="hero-actions">
-        <a href="#download" class="btn-white">⬇ Download Now</a>
+        <a href="/download.html" class="btn-white">⬇ Download Now</a>
         <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank" class="btn-ghost">★ GitHub</a>
       </div>
     </div>
@@ -1036,7 +1109,7 @@ footer {
     <p class="cta-sub">Free. Open source. No ads. No accounts. Just press play.</p>
   </div>
   <div class="cta-right r d2">
-    <a href="#download" class="btn-white" style="font-size:1rem;padding:1rem 2.5rem;">Download Free →</a>
+    <a href="/download.html" class="btn-white" style="font-size:1rem;padding:1rem 2.5rem;">Download Free →</a>
   </div>
 </div>
 
@@ -1047,9 +1120,10 @@ footer {
     <span class="footer-brand">WatchAny 2.0</span>
   </div>
   <ul class="footer-links">
+    <li><a href="/download.html">Download</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/faq.html">FAQ</a></li>
     <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">GitHub</a></li>
-    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0/releases" target="_blank">Releases</a></li>
-    <li><a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0/issues" target="_blank">Report Bug</a></li>
   </ul>
   <div class="footer-right">© 2026 WatchAny — Open Source</div>
 </footer>
@@ -1086,6 +1160,26 @@ updateCursorHover();
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
 });
+
+/* ─── MOBILE NAV MENU ─── */
+const navToggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if (navToggle && mobileMenu) {
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('open');
+    mobileMenu.classList.toggle('active');
+    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+  });
+
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navToggle.classList.remove('open');
+      mobileMenu.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+}
 
 /* ─── MARQUEE ─── */
 (function(){
