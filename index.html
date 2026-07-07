@@ -1058,19 +1058,6 @@ footer {
   </div>
 </div>
 
-<!-- DOWNLOAD -->
-<div class="dl-section" id="download">
-  <div class="dl-inner">
-    <div class="s-label r">Download</div>
-    <h2 class="s-title r d1">Your device.<br><em>Your download.</em></h2>
-    <p style="margin-top:1rem;color:var(--muted2);font-size:.9rem;font-weight:300;max-width:440px;" class="r d2">Always fetched live from GitHub Releases. Every link is the latest version.</p>
-    <div class="dl-grid" id="dl-grid">
-      <div class="dl-col">
-        <div class="dl-loading"><div class="spin"></div> Fetching latest release…</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- HOW IT WORKS -->
 <div class="section-full" id="how-it-works" style="max-width:none;padding:9rem 0;">
@@ -1465,85 +1452,16 @@ function simulatePlay(title, subtitle) {
   progressBar.classList.add('animating');
 }
 
-/* ─── GITHUB RELEASES ─── */
-async function loadReleases(){
-  const grid = document.getElementById('dl-grid');
+/* ─── LATEST VERSION FETCH ─── */
+(async()=>{
   try {
     const res = await fetch('https://api.github.com/repos/Fluffy-The-Penguin/watchAny-2.0/releases/latest');
-    if(!res.ok) throw new Error();
-    const d = await res.json();
-    const tag = d.tag_name;
-
-    document.getElementById('stat-ver').textContent = tag;
-
-    const fmt = b => (b/1024/1024).toFixed(1)+' MB';
-
-    const win_exe  = d.assets.filter(a => a.name.endsWith('.exe'));
-    const win_zip  = d.assets.filter(a => a.name.endsWith('.zip'));
-    const arm64    = d.assets.filter(a => a.name.includes('arm64'));
-    const armv7    = d.assets.filter(a => a.name.includes('armeabi-v7a'));
-    const x86      = d.assets.filter(a => a.name.includes('x86_64'));
-
-    const items = (list, labels) => list.map((a,i) => `
-      <a class="dl-item" href="${a.browser_download_url}">
-        <div class="dl-item-left">
-          <div class="dl-item-name">${labels[i] || a.name}</div>
-          <div class="dl-item-meta">${fmt(a.size)} · ${a.download_count} downloads</div>
-        </div>
-        <span class="dl-item-arrow">↓</span>
-      </a>`).join('');
-
-    grid.innerHTML = `
-      <div class="dl-col r">
-        <div class="dl-col-icon">🪟</div>
-        <div class="dl-col-name">Windows</div>
-        <div class="dl-col-sub">Runs on Windows 10 & 11. Full installer or portable standalone ZIP.</div>
-        <div class="dl-version">Release ${tag}</div>
-        <div class="dl-items">
-          ${items(win_exe, ['Installer (.exe)'])}
-          ${items(win_zip, ['Standalone (.zip)'])}
-        </div>
-      </div>
-      <div class="dl-col r d1">
-        <div class="dl-col-icon">🤖</div>
-        <div class="dl-col-name">Android</div>
-        <div class="dl-col-sub">Native APKs. Pick arm64 if you're not sure — it covers most modern phones.</div>
-        <div class="dl-version">Release ${tag}</div>
-        <div class="dl-items">
-          ${items(arm64, ['ARM64 — Recommended'])}
-          ${items(armv7, ['ARMv7 — Older devices'])}
-          ${items(x86,   ['x86_64 — Emulator / Intel'])}
-        </div>
-      </div>
-      <div class="dl-col r d2">
-        <div class="dl-col-icon">🐧</div>
-        <div class="dl-col-name">Linux / macOS</div>
-        <div class="dl-col-sub">Build from source using Flutter. Full instructions on GitHub.</div>
-        <div class="dl-version">Release ${tag}</div>
-        <div class="dl-items">
-          <a class="dl-item" href="https://github.com/Fluffy-The-Penguin/watchAny-2.0" target="_blank">
-            <div class="dl-item-left">
-              <div class="dl-item-name">Source Code</div>
-              <div class="dl-item-meta">Flutter · Dart · Build from source</div>
-            </div>
-            <span class="dl-item-arrow">→</span>
-          </a>
-        </div>
-      </div>`;
-
-    updateCursorHover();
-
-    // re-observe
-    const io = new IntersectionObserver(en => { en.forEach(e => { if(e.isIntersecting){e.target.classList.add('v');io.unobserve(e.target);}}); },{threshold:.08});
-    grid.querySelectorAll('.r').forEach(el=>io.observe(el));
-  } catch(_){
-    grid.innerHTML = `<div class="dl-col" style="grid-column:1/-1;text-align:center;padding:3rem;">
-      <p style="color:var(--muted);margin-bottom:1.5rem;font-size:.85rem;">Couldn't reach GitHub. View releases directly:</p>
-      <a href="https://github.com/Fluffy-The-Penguin/watchAny-2.0/releases/latest" target="_blank" class="btn-white">View Latest Release →</a>
-    </div>`;
-  }
-}
-loadReleases();
+    if(res.ok) {
+      const d = await res.json();
+      document.getElementById('stat-ver').textContent = d.tag_name;
+    }
+  }catch(_){}
+})();
 
 /* ─── RELEASE COUNT ─── */
 (async()=>{
