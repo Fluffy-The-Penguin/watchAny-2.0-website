@@ -230,6 +230,41 @@ nav.scrolled {
   position:absolute; inset:0; z-index:0;
   background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(255,255,255,.03) 0%, transparent 70%);
 }
+/* ── METEOR SHOWER ── */
+.meteor-shower {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+.meteor {
+  position: absolute;
+  top: -100px;
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), transparent);
+  transform: rotate(-35deg);
+  animation: meteor-fall 6s linear infinite;
+  opacity: 0;
+}
+@keyframes meteor-fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-35deg) scale(1);
+    opacity: 0;
+  }
+  1% {
+    opacity: 0.65;
+  }
+  12% {
+    transform: translate3d(-300px, 420px, 0) rotate(-35deg) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(-300px, 420px, 0) rotate(-35deg) scale(0.8);
+    opacity: 0;
+  }
+}
 /* Deep radial blur glow mesh for premium look */
 .hero-glow {
   position: absolute;
@@ -891,8 +926,8 @@ footer {
   .hero-bottom { align-items:center; }
   .hero-desc { text-align:center; }
   .hero-meta { justify-content:center; }
-  .hero-mockup-card { width:100%; max-width:540px; transform:none; box-shadow:0 15px 35px rgba(0,0,0,0.5); }
-  .hero-right { perspective:none; width:100%; display:flex; justify-content:center; }
+  .hero-mockup-card { width:90%; max-width:500px; }
+  .hero-right { width:100%; display:flex; justify-content:center; }
   .stats-band { grid-template-columns:1fr 1fr; }
   .stat-cell:nth-child(2) { border-right:none; }
   .stat-cell:nth-child(3) { border-right:1px solid var(--line); }
@@ -908,6 +943,9 @@ footer {
   nav { padding:1.2rem 1.5rem; }
   .nav-links { display:none; }
   .nav-cta { display:none; }
+  .nav-toggle { display:flex; }
+  .hero-mockup-card { width:100%; max-width:480px; transform:none !important; box-shadow:0 15px 35px rgba(0,0,0,0.5); }
+  .hero-right { perspective:none; }
   .nav-toggle { display:flex; }
   .hero { padding:8rem 1.5rem 4rem; }
   .hero-bottom { align-items:center; text-align:center; }
@@ -991,6 +1029,7 @@ footer {
   <div class="hero-bg"></div>
   <div class="hero-glow"></div>
   <div class="hero-grid"></div>
+  <div class="meteor-shower" id="meteor-shower"></div>
   <div class="hero-content">
     <div class="hero-left">
       <div class="hero-eyebrow">
@@ -1688,6 +1727,21 @@ window.addEventListener('scroll', () => {
     bar.style.width = pct + '%';
   }
 });
+
+/* ─── METEOR SHOWER GENERATION ─── */
+(function(){
+  const shower = document.getElementById('meteor-shower');
+  if (!shower) return;
+  const count = 10;
+  for (let i = 0; i < count; i++) {
+    const meteor = document.createElement('div');
+    meteor.className = 'meteor';
+    meteor.style.left = `${Math.random() * 100}%`;
+    meteor.style.animationDelay = `${Math.random() * 8}s`;
+    meteor.style.animationDuration = `${4 + Math.random() * 4}s`;
+    shower.appendChild(meteor);
+  }
+})();
 
 /* ─── SCREENSHOTS CAROUSEL ─── */
 (function(){
