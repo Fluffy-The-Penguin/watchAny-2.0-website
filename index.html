@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* ── SCROLL PROGRESS ── */
-#scroll-progress{position:fixed;top:0;left:0;z-index:9001;height:2px;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa,#818cf8);transition:width .08s linear;pointer-events:none;}
+#scroll-progress{position:fixed;top:0;left:0;z-index:9001;height:2px;width:0%;background:#fff;transition:width .08s linear;pointer-events:none;}
 
 /* ── HERO META ── */
 .hero-meta{display:flex;align-items:center;gap:1.25rem;margin-top:-.5rem;}
@@ -240,28 +240,43 @@ nav.scrolled {
 }
 .meteor {
   position: absolute;
-  top: -100px;
-  width: 1px;
-  height: 80px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), transparent);
-  transform: rotate(-35deg);
-  animation: meteor-fall 6s linear infinite;
+  top: var(--y);
+  left: var(--x);
+  width: var(--w);
+  height: 2px;
+  background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+  transform: rotate(-45deg);
   opacity: 0;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+  animation: meteor-fall var(--dur) linear infinite;
+  animation-delay: var(--delay);
+}
+.meteor::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px 3px #ffffff, 0 0 20px 6px rgba(99, 102, 241, 0.4);
 }
 @keyframes meteor-fall {
   0% {
-    transform: translate3d(0, 0, 0) rotate(-35deg) scale(1);
+    transform: translate3d(0, 0, 0) rotate(-45deg) scale(0.6);
     opacity: 0;
   }
-  1% {
-    opacity: 0.65;
+  6% {
+    opacity: 1;
   }
-  12% {
-    transform: translate3d(-300px, 420px, 0) rotate(-35deg) scale(0.8);
+  24% {
+    transform: translate3d(-600px, 600px, 0) rotate(-45deg) scale(1.2);
     opacity: 0;
   }
   100% {
-    transform: translate3d(-300px, 420px, 0) rotate(-35deg) scale(0.8);
+    transform: translate3d(-600px, 600px, 0) rotate(-45deg) scale(1.2);
     opacity: 0;
   }
 }
@@ -944,8 +959,7 @@ footer {
   .nav-links { display:none; }
   .nav-cta { display:none; }
   .nav-toggle { display:flex; }
-  .hero-mockup-card { width:100%; max-width:480px; transform:none !important; box-shadow:0 15px 35px rgba(0,0,0,0.5); }
-  .hero-right { perspective:none; }
+  .hero-mockup-card { width:90%; max-width:480px; }
   .nav-toggle { display:flex; }
   .hero { padding:8rem 1.5rem 4rem; }
   .hero-bottom { align-items:center; text-align:center; }
@@ -1732,13 +1746,15 @@ window.addEventListener('scroll', () => {
 (function(){
   const shower = document.getElementById('meteor-shower');
   if (!shower) return;
-  const count = 10;
+  const count = 12;
   for (let i = 0; i < count; i++) {
     const meteor = document.createElement('div');
     meteor.className = 'meteor';
-    meteor.style.left = `${Math.random() * 100}%`;
-    meteor.style.animationDelay = `${Math.random() * 8}s`;
-    meteor.style.animationDuration = `${4 + Math.random() * 4}s`;
+    meteor.style.setProperty('--x', `${Math.random() * 120 - 10}%`); // start slightly offscreen right
+    meteor.style.setProperty('--y', `${Math.random() * 50 - 20}%`);  // start upper half of screen
+    meteor.style.setProperty('--w', `${100 + Math.random() * 100}px`); // length of trail
+    meteor.style.setProperty('--dur', `${2 + Math.random() * 3}s`);   // duration
+    meteor.style.setProperty('--delay', `${Math.random() * 8}s`);    // delay
     shower.appendChild(meteor);
   }
 })();
@@ -1833,10 +1849,6 @@ window.addEventListener('scroll', () => {
     };
     
     const handleMouseLeave = () => {
-      if (window.innerWidth <= 1024) {
-        card.style.transform = 'none';
-        return;
-      }
       card.style.transform = 'rotateX(6deg) rotateY(-20deg) rotateZ(2deg) scale(1)';
       card.style.boxShadow = '20px 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.15)';
     };
