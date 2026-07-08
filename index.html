@@ -1732,15 +1732,7 @@ function simulatePlay(title, subtitle) {
   }catch(_){}
 })();
 
-/* ─── SCROLL PROGRESS ─── */
-window.addEventListener('scroll', () => {
-  const bar = document.getElementById('scroll-progress');
-  if (bar) {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
-    bar.style.width = pct + '%';
-  }
-});
+
 
 /* ─── METEOR SHOWER GENERATION ─── */
 (function(){
