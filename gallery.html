@@ -462,63 +462,168 @@ footer {
 <!-- GALLERY SECTION -->
 <section class="gallery-section">
   <div class="gallery-grid">
-    <div class="gallery-card r" onclick="openLightbox('gallery/home_screen.png', 'Desktop Dashboard', 'The clean watchAny home screen indexing your continue watching items, favorites, and quick search tools.')">
+    <!-- 1. Anime Home -->
+    <div class="gallery-card r" onclick="openLightbox('gallery/1-anime-home.png', 'Anime Home Dashboard', 'Clean dashboard showcasing anime continue watching list and search utilities.')">
       <div class="gallery-img-wrap">
-        <img class="gallery-img" src="gallery/home_screen.png" alt="Desktop Dashboard"/>
+        <img class="gallery-img" src="gallery/1-anime-home.png" alt="Anime Home Dashboard"/>
       </div>
       <div class="gallery-info">
-        <h3 class="gallery-title">Desktop Dashboard</h3>
-        <p class="gallery-desc">The initial setup dashboard tracking your progress and library links.</p>
-      </div>
-    </div>
-    
-    <div class="gallery-card r d1" onclick="openLightbox('gallery/player_screen.png', 'Media Player', 'Hardware-accelerated media player supporting subtitles, chapters, streams, and Torrent swarm connections.')">
-      <div class="gallery-img-wrap">
-        <img class="gallery-img" src="gallery/player_screen.png" alt="Media Player"/>
-      </div>
-      <div class="gallery-info">
-        <h3 class="gallery-title">Advanced Media Player</h3>
-        <p class="gallery-desc">Custom player layout optimized for 4K streams and local video playback.</p>
+        <h3 class="gallery-title">Anime Home Dashboard</h3>
+        <p class="gallery-desc">Personal dashboard for tracking active watch list items and favorites.</p>
       </div>
     </div>
 
-    <div class="gallery-card r d2" onclick="openLightbox('gallery/anime_details.png', 'Anime Details Hub', 'AniList integration showing episode cataloging, rating data, genres, and torrent providers.')">
+    <!-- 2. Anime Details -->
+    <div class="gallery-card r d1" onclick="openLightbox('gallery/2-anime-details.png', 'Anime Details Hub', 'Rich AniList detail page containing rating info, genres, episode cards, and trackers.')">
       <div class="gallery-img-wrap">
-        <img class="gallery-img" src="gallery/anime_details.png" alt="Anime Details Hub"/>
+        <img class="gallery-img" src="gallery/2-anime-details.png" alt="Anime Details Hub"/>
       </div>
       <div class="gallery-info">
         <h3 class="gallery-title">Anime Details Hub</h3>
-        <p class="gallery-desc">Comprehensive AniList integration displaying details, scores, and tracks.</p>
+        <p class="gallery-desc">Rich detail page containing trackers, ratings, details and episode cards.</p>
       </div>
     </div>
 
-    <div class="gallery-card r" onclick="openLightbox('gallery/manga_details.png', 'Manga Reader Hub', 'Chapter indexes, bookmarks, cover artwork, and continue reading panels styled matching anime details.')">
+    <!-- 3. Anime Search -->
+    <div class="gallery-card r d2" onclick="openLightbox('gallery/3-anime-search.png', 'Global Anime Search', 'Fast, comprehensive catalog search querying multiple providers in real-time.')">
       <div class="gallery-img-wrap">
-        <img class="gallery-img" src="gallery/manga_details.png" alt="Manga Reader Hub"/>
+        <img class="gallery-img" src="gallery/3-anime-search.png" alt="Global Anime Search"/>
       </div>
       <div class="gallery-info">
-        <h3 class="gallery-title">Manga Reader Hub</h3>
-        <p class="gallery-desc">Dynamic chapter browser with unified cover artwork layout.</p>
+        <h3 class="gallery-title">Global Anime Search</h3>
+        <p class="gallery-desc">Comprehensive catalog query tracking across multiple listing providers.</p>
       </div>
     </div>
 
-    <div class="gallery-card r d1" onclick="openLightbox('gallery/setup_wizard.png', 'Setup Wizard', 'The setup screen helping you configure local TorrServer instances and subtitle properties.')">
+    <!-- 4. Anime Library -->
+    <div class="gallery-card r" onclick="openLightbox('gallery/4-anime-library.png', 'Anime Library Manager', 'Unified library organizing watch status, completed titles, and favorites.')">
       <div class="gallery-img-wrap">
-        <img class="gallery-img" src="gallery/setup_wizard.png" alt="Setup Wizard"/>
+        <img class="gallery-img" src="gallery/4-anime-library.png" alt="Anime Library Manager"/>
       </div>
       <div class="gallery-info">
-        <h3 class="gallery-title">Unified Setup Wizard</h3>
-        <p class="gallery-desc">Clean step-by-step instructions to configure local ports and services.</p>
+        <h3 class="gallery-title">Anime Library Manager</h3>
+        <p class="gallery-desc">Unified database tracker dividing items by watch states and collections.</p>
       </div>
     </div>
 
-    <div class="gallery-card r d2" onclick="openLightbox('gallery/downloads_page.png', 'Releases Index', 'Self-contained download index tracking current Windows and Android releases.')">
+    <!-- 5. Anime Schedule -->
+    <div class="gallery-card r d1" onclick="openLightbox('gallery/5-anime-schedule.png', 'Release Calendar', 'Weekly airing schedule synced directly with live anime broadcast times.')">
       <div class="gallery-img-wrap">
-        <img class="gallery-img" src="gallery/downloads_page.png" alt="Releases Index"/>
+        <img class="gallery-img" src="gallery/5-anime-schedule.png" alt="Release Calendar"/>
       </div>
       <div class="gallery-info">
-        <h3 class="gallery-title">Releases Index</h3>
-        <p class="gallery-desc">Clean build selector with direct link references to APK and setup binaries.</p>
+        <h3 class="gallery-title">Release Calendar</h3>
+        <p class="gallery-desc">Calendar schedule reflecting live airing dates and airing timers.</p>
+      </div>
+    </div>
+
+    <!-- 6. Anime Downloads -->
+    <div class="gallery-card r d2" onclick="openLightbox('gallery/6-anime-downloads.png', 'Downloads & Offline Queue', 'Integrated torrent download manager showing active connections and progress.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/6-anime-downloads.png" alt="Downloads & Offline Queue"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Downloads &amp; Offline Queue</h3>
+        <p class="gallery-desc">Active download queue managing cached streams and local torrent files.</p>
+      </div>
+    </div>
+
+    <!-- 7. Manga Home -->
+    <div class="gallery-card r" onclick="openLightbox('gallery/7-manga-home.png', 'Manga Hub Dashboard', 'Continue reading index and search catalog tailored for manga readers.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/7-manga-home.png" alt="Manga Hub Dashboard"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Manga Hub Dashboard</h3>
+        <p class="gallery-desc">Manga-specific start page indexing bookmarked manga releases and list tags.</p>
+      </div>
+    </div>
+
+    <!-- 8. Manga Details -->
+    <div class="gallery-card r d1" onclick="openLightbox('gallery/8-manga-details.png', 'Manga Info & Chapters', 'Detailed chapter listing, bookmarked volumes, metadata, and description panel.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/8-manga-details.png" alt="Manga Info & Chapters"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Manga Info &amp; Chapters</h3>
+        <p class="gallery-desc">Metadata panel listing chapters, indexers, description, and status tags.</p>
+      </div>
+    </div>
+
+    <!-- 9. Manga Library -->
+    <div class="gallery-card r d2" onclick="openLightbox('gallery/8-manga-library.png', 'Manga Library Organizer', 'Visual bookshelf tracking reading progress, completed volumes, and backlogs.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/8-manga-library.png" alt="Manga Library Organizer"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Manga Library Organizer</h3>
+        <p class="gallery-desc">Bookshelf tracker indicating reading progress and bookmarks.</p>
+      </div>
+    </div>
+
+    <!-- 10. Manga Search -->
+    <div class="gallery-card r" onclick="openLightbox('gallery/9-manga-search.png', 'Manga Catalog Search', 'Quick search interface to browse and find manga volumes across providers.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/9-manga-search.png" alt="Manga Catalog Search"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Manga Catalog Search</h3>
+        <p class="gallery-desc">Manga querying interface sorting matches across different scrapers.</p>
+      </div>
+    </div>
+
+    <!-- 11. Movies Home -->
+    <div class="gallery-card r d1" onclick="openLightbox('gallery/10-movies-webseries-home.png', 'Cinema & Shows Dashboard', 'Dedicated portal for tracking movies, popular webseries, and streaming history.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/10-movies-webseries-home.png" alt="Cinema & Shows Dashboard"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Cinema &amp; Shows Dashboard</h3>
+        <p class="gallery-desc">Unified layout highlighting cinematic releases and trending webseries.</p>
+      </div>
+    </div>
+
+    <!-- 12. Movies Details -->
+    <div class="gallery-card r d2" onclick="openLightbox('gallery/11-moves-webseries-details.png', 'Cinema Information Hub', 'Cast directory, trailer links, streaming servers, magnet torrents, and video details.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/11-moves-webseries-details.png" alt="Cinema Information Hub"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Cinema Information Hub</h3>
+        <p class="gallery-desc">Info page listing cast data, streaming mirrors, and trailer previews.</p>
+      </div>
+    </div>
+
+    <!-- 13. Movies Search -->
+    <div class="gallery-card r" onclick="openLightbox('gallery/12-movies-webseries-search.png', 'Cinema Catalog Search', 'Fast search engine across cinema indexers, streaming APIs, and tracker libraries.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/12-movies-webseries-search.png" alt="Cinema Catalog Search"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Cinema Catalog Search</h3>
+        <p class="gallery-desc">Global crawler searching cinema metadata, releases, and tracker sites.</p>
+      </div>
+    </div>
+
+    <!-- 14. Movies Library -->
+    <div class="gallery-card r d1" onclick="openLightbox('gallery/13-movies-webseries-library.png', 'Cinema Personal Library', 'Custom collections, watchlists, and recently watched cinema tracking.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/13-movies-webseries-library.png" alt="Cinema Personal Library"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Cinema Personal Library</h3>
+        <p class="gallery-desc">Organizer database tracking movies and webseries watch progress.</p>
+      </div>
+    </div>
+
+    <!-- 15. Movies Player -->
+    <div class="gallery-card r d2" onclick="openLightbox('gallery/14-movies-webseries-player.png', 'Hardware-Accelerated Player', 'Built-in media player rendering HDR stream sources, local files, and torrent links.')">
+      <div class="gallery-img-wrap">
+        <img class="gallery-img" src="gallery/14-movies-webseries-player.png" alt="Hardware-Accelerated Player"/>
+      </div>
+      <div class="gallery-info">
+        <h3 class="gallery-title">Hardware-Accelerated Player</h3>
+        <p class="gallery-desc">Integrated media engine processing subtitle streams, tracks, and local streams.</p>
       </div>
     </div>
   </div>

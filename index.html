@@ -1180,10 +1180,15 @@ footer {
   <!-- SCREENSHOTS CAROUSEL -->
   <div class="screenshots-section r d2" id="gallery">
     <div class="ss-label">Interface Gallery</div>
+    <div class="ss-tabs">
+      <button class="ss-tab-btn active" id="tab-anime" onclick="switchGalleryTab('anime')">Anime</button>
+      <button class="ss-tab-btn" id="tab-manga" onclick="switchGalleryTab('manga')">Manga</button>
+      <button class="ss-tab-btn" id="tab-movies" onclick="switchGalleryTab('movies')">Movies &amp; Webseries</button>
+    </div>
     <div class="ss-track-wrap">
       <button class="ss-arrow ss-prev" id="ss-prev" aria-label="Previous Slide">‹</button>
       <div class="ss-track" id="ss-track">
-        <!-- populated dynamically by JS from gallery/ folder images -->
+        <!-- populated dynamically by JS -->
       </div>
       <button class="ss-arrow ss-next" id="ss-next" aria-label="Next Slide">›</button>
     </div>
@@ -1744,13 +1749,38 @@ function simulatePlay(title, subtitle) {
 })();
 
 /* ─── SCREENSHOTS CAROUSEL ─── */
-(function(){
-  const images = [
-    { src: 'gallery/home_screen.png', label: 'Desktop Dashboard' },
-    { src: 'gallery/player_screen.png', label: 'Media Player' },
-    { src: 'gallery/anime_details.png', label: 'Anime Details' },
-    { src: 'gallery/manga_details.png', label: 'Manga Reader' }
-  ];
+const galleryData = {
+  anime: [
+    { src: 'gallery/1-anime-home.png', label: 'Anime Home Dashboard' },
+    { src: 'gallery/2-anime-details.png', label: 'Anime Info & Details' },
+    { src: 'gallery/4-anime-library.png', label: 'Anime Library Manager' }
+  ],
+  manga: [
+    { src: 'gallery/7-manga-home.png', label: 'Manga Hub Dashboard' },
+    { src: 'gallery/8-manga-details.png', label: 'Manga Info & Chapters' },
+    { src: 'gallery/8-manga-library.png', label: 'Manga Library Organizer' }
+  ],
+  movies: [
+    { src: 'gallery/10-movies-webseries-home.png', label: 'Cinema & Shows Dashboard' },
+    { src: 'gallery/11-moves-webseries-details.png', label: 'Cinema Info & Details' },
+    { src: 'gallery/13-movies-webseries-library.png', label: 'Cinema Library Manager' }
+  ]
+};
+
+let currentGalleryCategory = 'anime';
+let currentIdx = 0;
+
+function switchGalleryTab(category) {
+  if (!galleryData[category]) return;
+  currentGalleryCategory = category;
+  currentIdx = 0;
+
+  // Toggle active tab classes
+  document.querySelectorAll('.ss-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.id === `tab-${category}`);
+  });
+
+  const images = galleryData[category];
   const track = document.getElementById('ss-track');
   const dotsContainer = document.getElementById('ss-dots');
   const prevBtn = document.getElementById('ss-prev');
@@ -1765,43 +1795,89 @@ function simulatePlay(title, subtitle) {
     </div>
   `).join('');
 
-  dotsContainer.innerHTML = images.map((_, i) => `
-    <span class="ss-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>
-  `).join('');
+  // Update dots container
+  if (dotsContainer) {
+    dotsContainer.innerHTML = images.map((_, i) => `
+      <span class="ss-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>
+    `).join('');
 
-  let currentIdx = 0;
-  const dots = dotsContainer.querySelectorAll('.ss-dot');
-
-  const updateSlider = (idx) => {
-    currentIdx = idx;
-    const slide = track.querySelector('.ss-slide');
-    if (!slide) return;
-    const slideWidth = slide.getBoundingClientRect().width;
-    const gap = 20; // 1.25rem = 20px
-    track.scrollTo({
-      left: idx * (slideWidth + gap),
-      behavior: 'smooth'
+    const dots = dotsContainer.querySelectorAll('.ss-dot');
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        updateSlider(parseInt(dot.getAttribute('data-idx')));
+      });
     });
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+  }
+
+  // Adjust visibility of arrow and dots based on layout and items fitting
+  const adjustControlsVisibility = () => {
+    const isDesktop = window.innerWidth > 1024;
+    if (isDesktop) {
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+      if (dotsContainer) dotsContainer.style.display = 'none';
+      track.scrollTo({ left: 0 });
+    } else {
+      if (prevBtn) prevBtn.style.display = 'flex';
+      if (nextBtn) nextBtn.style.display = 'flex';
+      if (dotsContainer) dotsContainer.style.display = 'flex';
+    }
   };
 
-  prevBtn.addEventListener('click', () => {
-    let prevIdx = currentIdx - 1;
-    if (prevIdx < 0) prevIdx = images.length - 1;
-    updateSlider(prevIdx);
+  window.removeEventListener('resize', adjustControlsVisibility);
+  window.addEventListener('resize', adjustControlsVisibility);
+  adjustControlsVisibility();
+}
+
+const updateSlider = (idx) => {
+  const track = document.getElementById('ss-track');
+  const dotsContainer = document.getElementById('ss-dots');
+  if (!track) return;
+
+  const slides = track.querySelectorAll('.ss-slide');
+  if (idx < 0 || idx >= slides.length) return;
+
+  currentIdx = idx;
+  const slideWidth = slides[0].getBoundingClientRect().width;
+  const gap = 20; // 1.25rem = 20px
+  track.scrollTo({
+    left: idx * (slideWidth + gap),
+    behavior: 'smooth'
   });
 
-  nextBtn.addEventListener('click', () => {
-    let nextIdx = currentIdx + 1;
-    if (nextIdx >= images.length) nextIdx = 0;
-    updateSlider(nextIdx);
-  });
+  if (dotsContainer) {
+    const dots = dotsContainer.querySelectorAll('.ss-dot');
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+  }
+};
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      updateSlider(parseInt(dot.getAttribute('data-idx')));
+(function() {
+  const prevBtn = document.getElementById('ss-prev');
+  const nextBtn = document.getElementById('ss-next');
+
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => {
+      const images = galleryData[currentGalleryCategory];
+      let prevIdx = currentIdx - 1;
+      if (prevIdx < 0) prevIdx = images.length - 1;
+      updateSlider(prevIdx);
     });
+
+    nextBtn.addEventListener('click', () => {
+      const images = galleryData[currentGalleryCategory];
+      let nextIdx = currentIdx + 1;
+      if (nextIdx >= images.length) nextIdx = 0;
+      updateSlider(nextIdx);
+    });
+  }
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', () => {
+    switchGalleryTab('anime');
   });
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    switchGalleryTab('anime');
+  }
 })();
 
 /* ─── 3D PARALLAX MOCKUP HOVER ─── */
