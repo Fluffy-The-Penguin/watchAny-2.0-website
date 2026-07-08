@@ -1849,6 +1849,22 @@ function simulatePlay(title, subtitle) {
     parent.addEventListener('mouseleave', handleMouseLeave);
   }
 })();
+
+/* ─── SCROLL PROGRESS ─── */
+const updateScrollProgress = () => {
+  const bar = document.getElementById('scroll-progress');
+  if (bar) {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 100;
+    bar.style.width = pct + '%';
+    bar.style.opacity = pct > 0 ? '1' : '0';
+  }
+};
+window.addEventListener('scroll', updateScrollProgress);
+window.addEventListener('resize', updateScrollProgress);
+window.addEventListener('DOMContentLoaded', updateScrollProgress);
+window.addEventListener('load', updateScrollProgress);
+updateScrollProgress();
 </script>
 </body>
 </html>
