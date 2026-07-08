@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
+/* -- SCROLL PROGRESS -- */
+#scroll-progress{position:fixed;top:0;left:0;z-index:9001;height:2px;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa,#818cf8);transition:width .08s linear;pointer-events:none;}
+
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
   --bg: #050505;
@@ -363,6 +366,9 @@ footer {
 </style>
 </head>
 <body>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
 
 <!-- CURSOR -->
 <div id="cursor"></div>
