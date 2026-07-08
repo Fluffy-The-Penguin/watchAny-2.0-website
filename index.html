@@ -40,21 +40,38 @@
 .vfp-shimmer{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.015) 50%,transparent 60%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* ── SCREENSHOTS CAROUSEL ── */
-.screenshots-section{max-width:1100px;margin:0 auto 0;}
-.ss-label{font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;}
-.ss-label::before{content:'';display:inline-block;width:24px;height:1px;background:var(--muted);}
-.ss-track-wrap{position:relative;display:flex;align-items:center;gap:.75rem;}
-.ss-track{display:flex;gap:1.25rem;overflow:hidden;flex:1;scroll-snap-type:x mandatory;}
-.ss-slide{flex-shrink:0;width:calc(50% - .625rem);scroll-snap-align:start;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.08);transition:border-color .2s,transform .2s;cursor:pointer;}
-.ss-slide:hover{border-color:rgba(255,255,255,.18);transform:translateY(-3px);}
-.ss-slide img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;}
-.ss-slide-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0d0d12,#0a0a14);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:rgba(255,255,255,.2);font-family:var(--mono);}
-.ss-arrow{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-size:1.2rem;cursor:pointer;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.ss-arrow:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25);}
-.ss-dots{display:flex;gap:.5rem;justify-content:center;margin-top:1.25rem;}
-.ss-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);transition:background .2s,transform .2s;cursor:pointer;}
-.ss-dot.active{background:#fff;transform:scale(1.25);}
+/* ── SCREENSHOTS INFINITE MARQUEE ── */
+.screenshots-section { max-width:100%; margin:0 auto; overflow:hidden; }
+.ss-label { font-family:var(--mono); font-size:.68rem; color:var(--muted); letter-spacing:.15em; text-transform:uppercase; margin-bottom:1.5rem; display:flex; align-items:center; gap:.75rem; }
+.ss-label::before { content:''; display:inline-block; width:24px; height:1px; background:var(--muted); }
+.ss-track-wrap { position:relative; width:100%; overflow:hidden; padding:1rem 0; }
+.ss-track-wrap::before, .ss-track-wrap::after { content:''; position:absolute; top:0; bottom:0; width:120px; z-index:3; pointer-events:none; }
+.ss-track-wrap::before { left:0; background:linear-gradient(90deg, #050505 0%, transparent 100%); }
+.ss-track-wrap::after { right:0; background:linear-gradient(-90deg, #050505 0%, transparent 100%); }
+.ss-track { display:flex; gap:1.5rem; width:max-content; animation:marquee 38s linear infinite; }
+.ss-track:hover { animation-play-state:paused; }
+.ss-slide { flex-shrink:0; width:290px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:#0d0d12; transition:border-color .25s, transform .25s, box-shadow .25s; cursor:pointer; box-shadow:0 4px 20px rgba(0,0,0,.3); }
+.ss-slide:hover { border-color:rgba(167,139,250,.4); transform:translateY(-4px) scale(1.02); box-shadow:0 12px 30px rgba(167,139,250,.15); }
+.ss-slide img { width:100%; display:block; aspect-ratio:16/10; object-fit:cover; }
+.ss-slide-info { padding:0.75rem 0.9rem; background:rgba(255,255,255,0.01); border-top:1px solid rgba(255,255,255,0.03); }
+.ss-slide-title { font-family:'Outfit', sans-serif; font-size:0.78rem; font-weight:600; color:#fff; margin-bottom:0.15rem; text-align:left; }
+.ss-slide-tag { font-family:var(--mono); font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; text-align:left; }
+
+@keyframes marquee {
+  0% { transform:translateX(0); }
+  100% { transform:translateX(-50%); }
+}
+
+/* ── LIGHTBOX OVERLAY ── */
+#lightbox { position:fixed; inset:0; z-index:2000; background:rgba(5,5,5,.95); backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; padding:2rem; }
+#lightbox.active { display:flex; }
+.lightbox-wrap { max-width:1000px; width:100%; display:flex; flex-direction:column; gap:1rem; }
+.lightbox-img-container { width:100%; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:#000; box-shadow:0 30px 60px rgba(0,0,0,0.8); }
+#lightbox-img { width:100%; height:auto; display:block; }
+.lightbox-title { font-family:'Outfit', sans-serif; font-size:1.5rem; font-weight:800; color:#fff; text-align:left; }
+.lightbox-desc { font-size:.95rem; color:var(--muted2); line-height:1.6; font-weight:300; text-align:left; }
+.lightbox-close { position:absolute; top:2rem; right:2.5rem; background:none; border:none; color:#fff; font-size:2.5rem; cursor:pointer; opacity:.6; transition:opacity .2s; }
+.lightbox-close:hover { opacity:1; }
 
 /* ── FEATURE CARD TILT ── */
 .feature-row{transition:background .25s,transform .2s;}
@@ -1749,137 +1766,60 @@ function simulatePlay(title, subtitle) {
   }
 })();
 
-/* ─── SCREENSHOTS CAROUSEL ─── */
-const galleryData = {
-  anime: [
-    { src: 'gallery/1-anime-home.png', label: 'Anime Home Dashboard' },
-    { src: 'gallery/2-anime-details.png', label: 'Anime Info & Details' },
-    { src: 'gallery/4-anime-library.png', label: 'Anime Library Manager' }
-  ],
-  manga: [
-    { src: 'gallery/7-manga-home.png', label: 'Manga Hub Dashboard' },
-    { src: 'gallery/8-manga-details.png', label: 'Manga Info & Chapters' },
-    { src: 'gallery/8-manga-library.png', label: 'Manga Library Organizer' }
-  ],
-  movies: [
-    { src: 'gallery/10-movies-webseries-home.png', label: 'Cinema & Shows Dashboard' },
-    { src: 'gallery/11-moves-webseries-details.png', label: 'Cinema Info & Details' },
-    { src: 'gallery/13-movies-webseries-library.png', label: 'Cinema Library Manager' }
-  ]
-};
+/* ─── SCREENSHOTS CAROUSEL (INFINITE MARQUEE) ─── */
+(function() {
+  const items = [
+    { src: 'gallery/1-anime-home.png', label: 'Anime Home Dashboard', category: 'Anime' },
+    { src: 'gallery/2-anime-details.png', label: 'Anime Details Hub', category: 'Anime' },
+    { src: 'gallery/4-anime-library.png', label: 'Anime Library Manager', category: 'Anime' },
+    { src: 'gallery/7-manga-home.png', label: 'Manga Hub Dashboard', category: 'Manga' },
+    { src: 'gallery/8-manga-details.png', label: 'Manga Info & Chapters', category: 'Manga' },
+    { src: 'gallery/8-manga-library.png', label: 'Manga Library Organizer', category: 'Manga' },
+    { src: 'gallery/10-movies-webseries-home.png', label: 'Cinema & Shows Dashboard', category: 'Cinema' },
+    { src: 'gallery/11-moves-webseries-details.png', label: 'Cinema Info & Details', category: 'Cinema' },
+    { src: 'gallery/14-movies-webseries-player.png', label: 'Cinema Player Hub', category: 'Cinema' }
+  ];
 
-let currentGalleryCategory = 'anime';
-let currentIdx = 0;
-
-function switchGalleryTab(category) {
-  if (!galleryData[category]) return;
-  currentGalleryCategory = category;
-  currentIdx = 0;
-
-  // Toggle active tab classes
-  document.querySelectorAll('.ss-tab-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.id === `tab-${category}`);
-  });
-
-  const images = galleryData[category];
   const track = document.getElementById('ss-track');
-  const dotsContainer = document.getElementById('ss-dots');
-  const prevBtn = document.getElementById('ss-prev');
-  const nextBtn = document.getElementById('ss-next');
-
   if (!track) return;
 
-  track.innerHTML = images.map(img => `
-    <div class="ss-slide">
-      <img src="${img.src}" alt="${img.label}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
-      <div class="ss-slide-placeholder" style="display:none">${img.label}</div>
+  // Duplicate items to ensure seamless infinite looping
+  const list = [...items, ...items];
+
+  track.innerHTML = list.map(img => `
+    <div class="ss-slide" onclick="openLightbox('${img.src}', '${img.label}', 'Visual demonstration of the watchAny ${img.category} interface.')">
+      <img src="${img.src}" alt="${img.label}" loading="lazy"/>
+      <div class="ss-slide-info">
+        <div class="ss-slide-title">${img.label}</div>
+        <div class="ss-slide-tag">${img.category}</div>
+      </div>
     </div>
   `).join('');
+})();
 
-  // Update dots container
-  if (dotsContainer) {
-    dotsContainer.innerHTML = images.map((_, i) => `
-      <span class="ss-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>
-    `).join('');
+/* ─── LIGHTBOX CONTROLS ─── */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxTitle = document.getElementById('lightbox-title');
+const lightboxDesc = document.getElementById('lightbox-desc');
 
-    const dots = dotsContainer.querySelectorAll('.ss-dot');
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        updateSlider(parseInt(dot.getAttribute('data-idx')));
-      });
-    });
-  }
-
-  // Adjust visibility of arrow and dots based on layout and items fitting
-  const adjustControlsVisibility = () => {
-    const isDesktop = window.innerWidth > 1024;
-    if (isDesktop) {
-      if (prevBtn) prevBtn.style.display = 'none';
-      if (nextBtn) nextBtn.style.display = 'none';
-      if (dotsContainer) dotsContainer.style.display = 'none';
-      track.scrollTo({ left: 0 });
-    } else {
-      if (prevBtn) prevBtn.style.display = 'flex';
-      if (nextBtn) nextBtn.style.display = 'flex';
-      if (dotsContainer) dotsContainer.style.display = 'flex';
-    }
-  };
-
-  window.removeEventListener('resize', adjustControlsVisibility);
-  window.addEventListener('resize', adjustControlsVisibility);
-  adjustControlsVisibility();
+function openLightbox(src, title, desc) {
+  if (!lightbox || !lightboxImg || !lightboxTitle || !lightboxDesc) return;
+  lightboxImg.src = src;
+  lightboxTitle.textContent = title;
+  lightboxDesc.textContent = desc;
+  lightbox.classList.add('active');
 }
 
-const updateSlider = (idx) => {
-  const track = document.getElementById('ss-track');
-  const dotsContainer = document.getElementById('ss-dots');
-  if (!track) return;
+function closeLightbox() {
+  if (lightbox) lightbox.classList.remove('active');
+}
 
-  const slides = track.querySelectorAll('.ss-slide');
-  if (idx < 0 || idx >= slides.length) return;
-
-  currentIdx = idx;
-  const slideWidth = slides[0].getBoundingClientRect().width;
-  const gap = 20; // 1.25rem = 20px
-  track.scrollTo({
-    left: idx * (slideWidth + gap),
-    behavior: 'smooth'
+if (lightbox) {
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) closeLightbox();
   });
-
-  if (dotsContainer) {
-    const dots = dotsContainer.querySelectorAll('.ss-dot');
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
-  }
-};
-
-(function() {
-  const prevBtn = document.getElementById('ss-prev');
-  const nextBtn = document.getElementById('ss-next');
-
-  if (prevBtn && nextBtn) {
-    prevBtn.addEventListener('click', () => {
-      const images = galleryData[currentGalleryCategory];
-      let prevIdx = currentIdx - 1;
-      if (prevIdx < 0) prevIdx = images.length - 1;
-      updateSlider(prevIdx);
-    });
-
-    nextBtn.addEventListener('click', () => {
-      const images = galleryData[currentGalleryCategory];
-      let nextIdx = currentIdx + 1;
-      if (nextIdx >= images.length) nextIdx = 0;
-      updateSlider(nextIdx);
-    });
-  }
-
-  // Initialize on load
-  document.addEventListener('DOMContentLoaded', () => {
-    switchGalleryTab('anime');
-  });
-  if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    switchGalleryTab('anime');
-  }
-})();
+}
 
 /* ─── 3D PARALLAX MOCKUP HOVER ─── */
 (function(){
