@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* -- SCROLL PROGRESS -- */
-#scroll-progress{position:fixed;top:0;left:0;z-index:9001;height:2px;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa,#818cf8);transition:width .08s linear;pointer-events:none;}
+#scroll-progress{position:fixed;top:0;left:0;z-index:9001;height:2px;width:0%;background:#ffffff;transition:width 0.22s cubic-bezier(0.2,0.8,0.2,1),opacity 0.2s ease;pointer-events:none;}
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
@@ -33,16 +33,7 @@ body {
 }
 
 /* ── CUSTOM CURSOR ── */
-#cursor {
-  position: fixed; top:0; left:0; z-index:9999;
-  width:10px; height:10px;
-  background:#fff;
-  border-radius:50%;
-  pointer-events:none;
-  transform: translate(-50%,-50%);
-  transition: width .2s, height .2s, background .2s;
-  mix-blend-mode: difference;
-}
+#cursor { position: fixed; top:0; left:0; z-index:9999; width:10px; height:10px; background:#fff; border-radius:50%; pointer-events:none; transform: translate(-50%,-50%); transition: width .2s, height .2s, background .2s; mix-blend-mode: difference; display: none; }
 #cursor.grow { width:40px; height:40px; }
 
 /* ── LOADER ── */
@@ -502,6 +493,7 @@ footer {
 /* ─── CURSOR ─── */
 const cur = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
+  cur.style.display = 'block';
   cur.style.left = e.clientX + 'px';
   cur.style.top = e.clientY + 'px';
 });
