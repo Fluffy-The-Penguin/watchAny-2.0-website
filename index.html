@@ -1588,7 +1588,7 @@ let progressPercent = 35;
 let progressInterval = null;
 
 function updateProgress() {
-  if (isPlaying) {
+  if (isPlaying && progressBar) {
     progressPercent += 0.1;
     if (progressPercent >= 100) progressPercent = 0;
     progressBar.style.width = `${progressPercent}%`;
@@ -1604,33 +1604,35 @@ function updateProgress() {
       return `${hrs > 0 ? hrs + ':' : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
     
-    mockTime.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
+    if (mockTime) mockTime.textContent = `${formatTime(currentSec)} / ${formatTime(totalSec)}`;
   }
 }
 
 // Start live ticker
-progressInterval = setInterval(updateProgress, 100);
+if (progressBar) {
+  progressInterval = setInterval(updateProgress, 100);
+}
 
 function togglePlayState() {
   isPlaying = !isPlaying;
   if (isPlaying) {
-    playBtn.textContent = '⏸';
-    progressBar.classList.add('animating');
+    if (playBtn) playBtn.textContent = '⏸';
+    if (progressBar) progressBar.classList.add('animating');
   } else {
-    playBtn.textContent = '▶';
-    progressBar.classList.remove('animating');
+    if (playBtn) playBtn.textContent = '▶';
+    if (progressBar) progressBar.classList.remove('animating');
   }
 }
 // Set initial button text to pause because it starts playing
-playBtn.textContent = '⏸';
+if (playBtn) playBtn.textContent = '⏸';
 
 function simulatePlay(title, subtitle) {
-  mockTitle.textContent = title;
-  mockSub.textContent = subtitle;
+  if (mockTitle) mockTitle.textContent = title;
+  if (mockSub) mockSub.textContent = subtitle;
   progressPercent = 0;
   isPlaying = true;
-  playBtn.textContent = '⏸';
-  progressBar.classList.add('animating');
+  if (playBtn) playBtn.textContent = '⏸';
+  if (progressBar) progressBar.classList.add('animating');
 }
 
 /* ─── LATEST VERSION & STATS FETCH ─── */
