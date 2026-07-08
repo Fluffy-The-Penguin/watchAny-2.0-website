@@ -40,27 +40,23 @@
 .vfp-shimmer{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.015) 50%,transparent 60%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* ── SCREENSHOTS INFINITE MARQUEE ── */
-.screenshots-section { max-width:100%; margin:0 auto; overflow:hidden; }
+/* ── SCREENSHOTS SECTION ── */
+.screenshots-section { max-width:1100px; margin:0 auto 0; }
 .ss-label { font-family:var(--mono); font-size:.68rem; color:var(--muted); letter-spacing:.15em; text-transform:uppercase; margin-bottom:1.5rem; display:flex; align-items:center; gap:.75rem; }
 .ss-label::before { content:''; display:inline-block; width:24px; height:1px; background:var(--muted); }
-.ss-track-wrap { position:relative; width:100%; overflow:hidden; padding:1rem 0; }
-.ss-track-wrap::before, .ss-track-wrap::after { content:''; position:absolute; top:0; bottom:0; width:120px; z-index:3; pointer-events:none; }
-.ss-track-wrap::before { left:0; background:linear-gradient(90deg, #050505 0%, transparent 100%); }
-.ss-track-wrap::after { right:0; background:linear-gradient(-90deg, #050505 0%, transparent 100%); }
-.ss-track { display:flex; gap:1.5rem; width:max-content; animation:marquee 38s linear infinite; }
-.ss-track:hover { animation-play-state:paused; }
-.ss-slide { flex-shrink:0; width:290px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:#0d0d12; transition:border-color .25s, transform .25s, box-shadow .25s; cursor:pointer; box-shadow:0 4px 20px rgba(0,0,0,.3); }
-.ss-slide:hover { border-color:rgba(167,139,250,.4); transform:translateY(-4px) scale(1.02); box-shadow:0 12px 30px rgba(167,139,250,.15); }
+.ss-track-wrap { position:relative; display:flex; align-items:center; gap:.75rem; }
+.ss-track { display:flex; gap:1.25rem; overflow:hidden; flex:1; scroll-snap-type:x mandatory; scroll-behavior:smooth; }
+.ss-slide { flex-shrink:0; width:calc(50% - 0.625rem); scroll-snap-align:start; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.08); background:#0d0d12; transition:border-color .2s,transform .2s; cursor:pointer; }
+.ss-slide:hover { border-color:rgba(167,139,250,.4); transform:translateY(-3px); }
 .ss-slide img { width:100%; display:block; aspect-ratio:16/10; object-fit:cover; }
-.ss-slide-info { padding:0.75rem 0.9rem; background:rgba(255,255,255,0.01); border-top:1px solid rgba(255,255,255,0.03); }
+.ss-slide-info { padding:0.75rem 0.9rem; background:rgba(255, 255, 255, 0.01); border-top:1px solid rgba(255, 255, 255, 0.03); }
 .ss-slide-title { font-family:'Outfit', sans-serif; font-size:0.78rem; font-weight:600; color:#fff; margin-bottom:0.15rem; text-align:left; }
 .ss-slide-tag { font-family:var(--mono); font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; text-align:left; }
-
-@keyframes marquee {
-  0% { transform:translateX(0); }
-  100% { transform:translateX(-50%); }
-}
+.ss-arrow { width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.55); font-size:1.2rem; cursor:pointer; transition:all .2s; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.ss-arrow:hover { background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.25); }
+.ss-dots { display:flex; gap:.5rem; justify-content:center; margin-top:1.25rem; }
+.ss-dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.18); transition:background .2s,transform .2s; cursor:pointer; }
+.ss-dot.active { background:#fff; transform:scale(1.25); }
 
 /* ── LIGHTBOX OVERLAY ── */
 #lightbox { position:fixed; inset:0; z-index:2000; background:rgba(5,5,5,.95); backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; padding:2rem; }
@@ -1198,11 +1194,6 @@ footer {
   <!-- SCREENSHOTS CAROUSEL -->
   <div class="screenshots-section r d2" id="gallery">
     <div class="ss-label">Interface Gallery</div>
-    <div class="ss-tabs">
-      <button class="ss-tab-btn active" id="tab-anime" onclick="switchGalleryTab('anime')">Anime</button>
-      <button class="ss-tab-btn" id="tab-manga" onclick="switchGalleryTab('manga')">Manga</button>
-      <button class="ss-tab-btn" id="tab-movies" onclick="switchGalleryTab('movies')">Movies &amp; Webseries</button>
-    </div>
     <div class="ss-track-wrap">
       <button class="ss-arrow ss-prev" id="ss-prev" aria-label="Previous Slide">‹</button>
       <div class="ss-track" id="ss-track">
@@ -1766,11 +1757,11 @@ function simulatePlay(title, subtitle) {
   }
 })();
 
-/* ─── SCREENSHOTS CAROUSEL (INFINITE MARQUEE) ─── */
+/* ─── SCREENSHOTS CAROUSEL (MANUAL SLIDER) ─── */
 (function() {
-  const items = [
+  const images = [
     { src: 'gallery/1-anime-home.png', label: 'Anime Home Dashboard', category: 'Anime' },
-    { src: 'gallery/2-anime-details.png', label: 'Anime Details Hub', category: 'Anime' },
+    { src: 'gallery/2-anime-details.png', label: 'Anime Info & Details', category: 'Anime' },
     { src: 'gallery/4-anime-library.png', label: 'Anime Library Manager', category: 'Anime' },
     { src: 'gallery/7-manga-home.png', label: 'Manga Hub Dashboard', category: 'Manga' },
     { src: 'gallery/8-manga-details.png', label: 'Manga Info & Chapters', category: 'Manga' },
@@ -1781,12 +1772,13 @@ function simulatePlay(title, subtitle) {
   ];
 
   const track = document.getElementById('ss-track');
+  const dotsContainer = document.getElementById('ss-dots');
+  const prevBtn = document.getElementById('ss-prev');
+  const nextBtn = document.getElementById('ss-next');
+
   if (!track) return;
 
-  // Duplicate items to ensure seamless infinite looping
-  const list = [...items, ...items];
-
-  track.innerHTML = list.map(img => `
+  track.innerHTML = images.map(img => `
     <div class="ss-slide" onclick="openLightbox('${img.src}', '${img.label}', 'Visual demonstration of the watchAny ${img.category} interface.')">
       <img src="${img.src}" alt="${img.label}" loading="lazy"/>
       <div class="ss-slide-info">
@@ -1795,6 +1787,72 @@ function simulatePlay(title, subtitle) {
       </div>
     </div>
   `).join('');
+
+  const getVisibleCount = () => window.innerWidth > 768 ? 2 : 1;
+  let currentIdx = 0;
+
+  const renderDots = () => {
+    if (!dotsContainer) return;
+    const visible = getVisibleCount();
+    const steps = images.length - visible + 1;
+    
+    dotsContainer.innerHTML = Array.from({ length: steps }).map((_, i) => `
+      <span class="ss-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></span>
+    `).join('');
+
+    const dots = dotsContainer.querySelectorAll('.ss-dot');
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        updateSlider(parseInt(dot.getAttribute('data-idx')));
+      });
+    });
+  };
+
+  const updateSlider = (idx) => {
+    const visible = getVisibleCount();
+    const maxIdx = images.length - visible;
+    if (idx < 0) idx = 0;
+    if (idx > maxIdx) idx = maxIdx;
+
+    currentIdx = idx;
+    const slide = track.querySelector('.ss-slide');
+    if (!slide) return;
+    const slideWidth = slide.getBoundingClientRect().width;
+    const gap = 20; // 1.25rem = 20px
+    track.scrollTo({
+      left: idx * (slideWidth + gap),
+      behavior: 'smooth'
+    });
+
+    if (dotsContainer) {
+      const dots = dotsContainer.querySelectorAll('.ss-dot');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+    }
+  };
+
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', () => {
+      const visible = getVisibleCount();
+      let prevIdx = currentIdx - 1;
+      if (prevIdx < 0) prevIdx = images.length - visible;
+      updateSlider(prevIdx);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      let nextIdx = currentIdx + 1;
+      const visible = getVisibleCount();
+      if (nextIdx > images.length - visible) nextIdx = 0;
+      updateSlider(nextIdx);
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    renderDots();
+    updateSlider(currentIdx);
+  });
+
+  renderDots();
+  updateSlider(0);
 })();
 
 /* ─── LIGHTBOX CONTROLS ─── */
